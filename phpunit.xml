@@ -1,0 +1,8 @@
+<phpunit>
+  <php>
+    <server name="DB_HOST" value="db"/>
+    <server name="DB_USER" value="app_user"/>
+    <server name="DB_PASSWORD" value="password"/>
+    <server name="DB_NAME" value="app"/>
+  </php>
+</phpunit>

@@ -56,14 +56,14 @@ class Validator extends ValidatorAbstract
 
     public function validateDate($date, string $fieldName): void
     {
-        if ($date != null && strtotime($date) === false) {
+        if (null != $date && false === strtotime($date)) {
             $this->addError(error: "{$fieldName} is not a valid date");
         }
     }
 
     public function validateInt($value, string $fieldName): void
     {
-        if (!filter_var($value, FILTER_VALIDATE_INT) !== false) {
+        if (false !== !filter_var($value, FILTER_VALIDATE_INT)) {
             $this->addError(error: "{$fieldName} is not ineger type");
         }
     }
@@ -89,7 +89,7 @@ class Validator extends ValidatorAbstract
         isset($value->foreign_key) ? $fieldName = $value->foreign_key : '';
 
         foreach ($value->value as $atual_value) {
-            if ($this->find(model: $value->model, value: $atual_value, fieldName: $fieldName) === 0) {
+            if (0 === $this->find(model: $value->model, value: $atual_value, fieldName: $fieldName)) {
                 $this->addError(error: "{$fielNameMessage} = $atual_value is not exists");
             }
         }
@@ -105,7 +105,7 @@ class Validator extends ValidatorAbstract
 
         $object_query_builder = $this->queryBuilder->table(table: $object_table::TABLE);
 
-        $result_query_builder = (call_user_func(array($object_query_builder, 'find'), [$fieldName => $value]))->getResult();
+        $result_query_builder = call_user_func([$object_query_builder, 'find'], [$fieldName => $value])->getResult();
 
         $count = count($result_query_builder);
 

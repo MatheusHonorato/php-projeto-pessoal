@@ -12,7 +12,7 @@ class CompanyModel extends CompanyModelAbstract
           'id' => $this->id,
           'name' => $this->name,
           'cnpj' => $this->cnpj,
-          'address' => $this->address
+          'address' => $this->address,
         ];
     }
 }

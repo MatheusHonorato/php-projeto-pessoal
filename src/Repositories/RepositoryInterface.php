@@ -12,5 +12,5 @@ interface RepositoryInterface
 
     public function getAll(int $limit, int $offset): array;
 
-    public function destroy(int $model_id): array | bool;
+    public function destroy(int $model_id): array|bool;
 }

@@ -9,5 +9,5 @@ use App\Util\HttpInterface;
 
 interface RequestModelInterface
 {
-    public function validated(HttpInterface $http): ModelInterface | array;
+    public function validated(HttpInterface $http): ModelInterface|array;
 }

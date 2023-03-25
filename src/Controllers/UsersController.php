@@ -7,7 +7,6 @@ namespace App\Controllers;
 use App\Http\{RequestModelUserInterface};
 use App\Repositories\UserRepositoryInterface;
 use App\Util\{HttpInterface};
-use stdClass;
 
 class UsersController
 {
@@ -26,7 +25,7 @@ class UsersController
         unset($requestValidated->limit, $requestValidated->offset);
 
         if (count((array) $requestValidated) > 0) {
-            return  $http->response->execute(
+            return $http->response->execute(
                 data: $this->userRepository->finByParam(
                     terms: (array) $requestValidated,
                     limit: (int) $limit,
@@ -47,7 +46,7 @@ class UsersController
 
     public function getById($param, HttpInterface $http): object
     {
-        if (!is_numeric($param['id']) && $param['id'] != null) {
+        if (!is_numeric($param['id']) && null != $param['id']) {
             return $http->response->execute(data: [], status: 200);
         }
 
@@ -56,7 +55,7 @@ class UsersController
 
     public function store(
         HttpInterface $http,
-    ): stdClass {
+    ): \stdClass {
         try {
             $user = $this->requestModelUser->validated(http: $http);
 
@@ -70,7 +69,7 @@ class UsersController
         return $http->response->execute(data: $this->userRepository->save(user: $user, company_ids: $user->company_ids), status: 201);
     }
 
-    public function update($param, HttpInterface $http): stdClass
+    public function update($param, HttpInterface $http): \stdClass
     {
         try {
             $user = $this->requestModelUser
@@ -88,9 +87,9 @@ class UsersController
         return $http->response->execute(data: $this->userRepository->update(user: $user, company_ids: $user->company_ids), status: 200);
     }
 
-    public function destroy(array $param, HttpInterface $http): stdClass
+    public function destroy(array $param, HttpInterface $http): \stdClass
     {
-        if ($this->userRepository->destroy(id: (int) $param['id']) === true) {
+        if (true === $this->userRepository->destroy(id: (int) $param['id'])) {
             return $http->response->execute(data: [], status: 204);
         }
 

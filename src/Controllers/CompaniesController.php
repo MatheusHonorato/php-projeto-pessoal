@@ -7,7 +7,6 @@ namespace App\Controllers;
 use App\Http\{RequestModelCompanyInterface};
 use App\Repositories\CompanyRepositoryInterface;
 use App\Util\{HttpInterface};
-use stdClass;
 
 class CompaniesController
 {
@@ -16,7 +15,6 @@ class CompaniesController
         private RequestModelCompanyInterface $requestModelCompany,
     ) {
     }
-
 
     public function index(HttpInterface $http): object
     {
@@ -27,7 +25,7 @@ class CompaniesController
         unset($requestValidated->limit, $requestValidated->offset);
 
         if (count((array) $requestValidated) > 0) {
-            return  $http->response->execute(
+            return $http->response->execute(
                 data: $this->companyRepository->finByParam(
                     terms: (array) $requestValidated,
                     limit: (int) $limit,
@@ -48,7 +46,7 @@ class CompaniesController
 
     public function getById($param, HttpInterface $http): object
     {
-        if (!is_numeric($param['id']) && $param['id'] != null) {
+        if (!is_numeric($param['id']) && null != $param['id']) {
             return $http->response->execute(data: [], status: 200);
         }
 
@@ -57,7 +55,7 @@ class CompaniesController
 
     public function store(
         HttpInterface $http,
-    ): stdClass {
+    ): \stdClass {
         try {
             $company = $this->requestModelCompany->validated(http: $http);
 
@@ -71,7 +69,7 @@ class CompaniesController
         return $http->response->execute(data: $this->companyRepository->save(company: $company, user_ids: $company->user_ids), status: 201);
     }
 
-    public function update($param, HttpInterface $http): stdClass
+    public function update($param, HttpInterface $http): \stdClass
     {
         try {
             $company = $this->requestModelCompany
@@ -89,9 +87,9 @@ class CompaniesController
         return $http->response->execute(data: $this->companyRepository->update(company: $company, user_ids: $company->user_ids), status: 200);
     }
 
-    public function destroy(array $param, HttpInterface $http): stdClass
+    public function destroy(array $param, HttpInterface $http): \stdClass
     {
-        if ($this->companyRepository->destroy(id: (int) $param['id']) === true) {
+        if (true === $this->companyRepository->destroy(id: (int) $param['id'])) {
             return $http->response->execute(data: [], status: 204);
         }
 

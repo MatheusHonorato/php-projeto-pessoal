@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\DB;
 
-use PDO;
-use PDOException;
-
 class PDOMonostate implements DBInterface
 {
     protected static object $connection;
@@ -21,13 +18,13 @@ class PDOMonostate implements DBInterface
     {
         if (empty(self::$connection)) {
             try {
-                self::$connection = new PDO(
-                    self::$config->DB_CONNECTION.":host=".self::$config->DB_HOST.";dbname=".self::$config->DB_NAME,
+                self::$connection = new \PDO(
+                    self::$config->DB_CONNECTION.':host='.self::$config->DB_HOST.';dbname='.self::$config->DB_NAME,
                     self::$config->DB_USER,
                     self::$config->DB_PASSWORD
                 );
-            } catch (PDOException $exception) {
-                throw new PDOException($exception->getMessage());
+            } catch (\PDOException $exception) {
+                throw new \PDOException($exception->getMessage());
             }
         }
 

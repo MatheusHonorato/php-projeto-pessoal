@@ -10,9 +10,9 @@ abstract class CompanyModelAbstract implements ModelInterface
 
     public function __construct(
         protected readonly ?int $id = null,
-        protected readonly string $name = "",
-        protected readonly string $cnpj = "",
-        protected readonly string $address = "",
+        protected readonly string $name = '',
+        protected readonly string $cnpj = '',
+        protected readonly string $address = '',
         protected readonly array $user_ids = [],
     ) {
     }

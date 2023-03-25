@@ -11,20 +11,20 @@ interface QueryBuilderInterface
     public function find(
         ?array $terms = null,
         ?array $params = null,
-        string $columns = "*",
+        string $columns = '*',
     ): QueryBuilder;
 
     public function findById(int $id): QueryBuilder;
 
     public function fetch(): QueryBuilder;
 
-    public function create(array $data, string $table = ""): QueryBuilder;
+    public function create(array $data, string $table = ''): QueryBuilder;
 
-    public function update(array $data, string $table = ""): QueryBuilder;
+    public function update(array $data, string $table = ''): QueryBuilder;
 
-    public function delete(string $terms, array $params, string $table = ""): QueryBuilder;
+    public function delete(string $terms, array $params, string $table = ''): QueryBuilder;
 
-    public function execute(): int | bool;
+    public function execute(): int|bool;
 
     public function join(string $table_join, array $keys): QueryBuilder;
 

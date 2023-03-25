@@ -5,9 +5,6 @@ namespace App\Util\Router;
 use App\Http\RequestModelInterface;
 use App\Repositories\RepositoryInterface;
 use App\Util\HttpInterface;
-use App\Util\Router\RouteWildcard;
-use App\Util\Router\Uri;
-use Closure;
 
 class Router implements RouterInterface
 {
@@ -37,7 +34,7 @@ class Router implements RouterInterface
         return $this;
     }
 
-    public function group(array $routeOptions, Closure $callback): void
+    public function group(array $routeOptions, \Closure $callback): void
     {
         $this->routeOptions = $routeOptions;
         $callback->call($this);
@@ -60,6 +57,6 @@ class Router implements RouterInterface
             }
         }
 
-        //return (new Controller)->call(new Route('GET', 'NotFoundController:index', []));
+        // return (new Controller)->call(new Route('GET', 'NotFoundController:index', []));
     }
 }

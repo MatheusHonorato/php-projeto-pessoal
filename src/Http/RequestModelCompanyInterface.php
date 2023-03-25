@@ -11,5 +11,5 @@ interface RequestModelCompanyInterface extends RequestModelInterface
 {
     public function setExtraDatas(array $value): RequestModelCompany;
 
-    public function validated(HttpInterface $http): CompanyModel | array;
+    public function validated(HttpInterface $http): CompanyModel|array;
 }

@@ -13,24 +13,26 @@ class RequestModelUser implements RequestModelUserInterface
     public function __construct(
         private ValidatorInterface $validator,
         private string $model,
-        private string $unique = "unique:user",
-        private ?array $extra_datas = ["id" => null]
+        private string $unique = 'unique:user',
+        private ?array $extra_datas = ['id' => null]
     ) {
     }
 
     public function setExtraDatas(array $value): RequestModelUser
     {
         $this->extra_datas = $value;
+
         return $this;
     }
 
     public function setUnique(string $value): RequestModelUser
     {
         $this->unique = $value;
+
         return $this;
     }
 
-    public function validated(HttpInterface $http): UserModel | array
+    public function validated(HttpInterface $http): UserModel|array
     {
         $validated = (array) $http->request::validate(
             validator: $this->validator,

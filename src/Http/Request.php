@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Util\ValidatorInterface;
-use stdClass;
 
 class Request implements RequestInterface
 {
@@ -13,7 +12,7 @@ class Request implements RequestInterface
         ?ValidatorInterface $validator = null,
         ?array $params = [],
         ?array $extra_datas = []
-    ): stdClass {
+    ): \stdClass {
         $GET = array_map(function ($value) {
             return htmlspecialchars(string: $value);
         }, (array) $_GET);
@@ -34,28 +33,28 @@ class Request implements RequestInterface
             $request->$key = isset($request->$key) ? $request->$key : null;
 
             foreach ($rules as $rule) {
-                $value_rule = strpos($rule, ":") ? explode(":", $rule) : null;
+                $value_rule = strpos($rule, ':') ? explode(':', $rule) : null;
 
-                $rule_terms = is_array($value_rule) ? (array) explode("-", $value_rule[0]) : (array) $rule;
+                $rule_terms = is_array($value_rule) ? (array) explode('-', $value_rule[0]) : (array) $rule;
 
                 $rule_terms = array_map(function ($term) {
                     return ucfirst($term);
                 }, $rule_terms);
 
-                $lastNameMethod = implode("", $rule_terms);
+                $lastNameMethod = implode('', $rule_terms);
 
                 $ignoreThisParam = [];
 
                 isset($value_rule[1]) ? $model = $value_rule[1] : $model = '';
                 isset($value_rule[2]) ? $foreign_key = $value_rule[2] : $foreign_key = '';
 
-                if ($lastNameMethod == 'UniqueIgnoreThis') {
+                if ('UniqueIgnoreThis' == $lastNameMethod) {
                     $ignoreThisParam = ['id' => $extra_datas['id']];
                 }
 
-                $value_rule == null ? $value_param = $request->$key : $value_param = (object) ['model' => $model, 'value' => $request->$key, 'foreign_key' =>  $foreign_key, 'ignoreThisParam' => $ignoreThisParam];
+                null == $value_rule ? $value_param = $request->$key : $value_param = (object) ['model' => $model, 'value' => $request->$key, 'foreign_key' => $foreign_key, 'ignoreThisParam' => $ignoreThisParam];
 
-                call_user_func(array($validator, 'validate'.$lastNameMethod), $value_param, $key);
+                call_user_func([$validator, 'validate'.$lastNameMethod], $value_param, $key);
             }
         }
 

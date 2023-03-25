@@ -16,7 +16,7 @@ interface CompanyRepositoryInterface extends RepositoryInterface
 
     public function save(CompanyModelAbstract $company, array $user_ids): array;
 
-    public function update(CompanyModelAbstract $company, array $user_ids): array | bool;
+    public function update(CompanyModelAbstract $company, array $user_ids): array|bool;
 
-    public function destroy(int $id): array | bool;
+    public function destroy(int $id): array|bool;
 }

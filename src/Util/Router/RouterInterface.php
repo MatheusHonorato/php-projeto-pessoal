@@ -4,7 +4,6 @@ namespace App\Util\Router;
 
 use App\Http\RequestModelInterface;
 use App\Repositories\RepositoryInterface;
-use Closure;
 
 interface RouterInterface
 {
@@ -17,7 +16,7 @@ interface RouterInterface
         array $wildcardAliases = [],
     ): RouterInterface;
 
-    public function group(array $routeOptions, Closure $callback): void;
+    public function group(array $routeOptions, \Closure $callback): void;
 
     public function options(array $options): void;
 

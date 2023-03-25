@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Http\RequestModelCompany;
 use App\Http\RequestModelUser;
-use App\Models\UserModel;
 use App\Models\CompanyModel;
+use App\Models\UserModel;
 use App\Repositories\CompanyRepository;
 use App\Repositories\UserRepository;
 
@@ -30,5 +30,5 @@ try {
 
     $router->init();
 } catch (Exception $e) {
-    var_dump($e->getMessage() . ' ' . $e->getFile() . ' ' . $e->getLine());
+    var_dump($e->getMessage().' '.$e->getFile().' '.$e->getLine());
 }

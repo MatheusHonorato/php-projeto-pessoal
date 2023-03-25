@@ -13,24 +13,26 @@ class RequestModelCompany implements RequestModelCompanyInterface
     public function __construct(
         private ValidatorInterface $validator,
         private string $model,
-        private string $unique = "unique:company",
-        private ?array $extra_datas = ["id" => null]
+        private string $unique = 'unique:company',
+        private ?array $extra_datas = ['id' => null]
     ) {
     }
 
     public function setExtraDatas(array $value): RequestModelCompany
     {
         $this->extra_datas = $value;
+
         return $this;
     }
 
     public function setUnique(string $value): RequestModelCompany
     {
         $this->unique = $value;
+
         return $this;
     }
 
-    public function validated(HttpInterface $http): CompanyModel | array
+    public function validated(HttpInterface $http): CompanyModel|array
     {
         $validated = (array) $http->request::validate(
             validator: $this->validator,

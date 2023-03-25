@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\DB\QueryBuilderInterface;
-use App\Models\{UserModelAbstract, UserCompanyModelAbstract};
+use App\Models\UserCompanyModelAbstract;
+use App\Models\UserModelAbstract;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -22,7 +23,7 @@ class UserRepository implements UserRepositoryInterface
                 ->getResult();
 
         $companies = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-                        ->find(terms: ['user_id' => $id], columns: "companies.*")
+                        ->find(terms: ['user_id' => $id], columns: 'companies.*')
                         ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
                         ->getResult();
 
@@ -41,7 +42,7 @@ class UserRepository implements UserRepositoryInterface
 
         if (isset($terms['company'])) {
             $users = $users
-                        ->find(terms: ['companies.name' => $terms['company']], columns: "users.*")
+                        ->find(terms: ['companies.name' => $terms['company']], columns: 'users.*')
                         ->join(table_join: 'users_companies', keys: ['users.id', 'users_companies.user_id'])
                         ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
                         ->getResult(limit: $limit, offset: $offset);
@@ -51,7 +52,7 @@ class UserRepository implements UserRepositoryInterface
 
         foreach ($users as $key => $user) {
             $users[$key]['companies'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-                                               ->find(terms: ['user_id' => $user['id']], columns: "companies.*")
+                                               ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
                                                ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
                                                ->getResult();
         }
@@ -65,7 +66,7 @@ class UserRepository implements UserRepositoryInterface
 
         foreach ($users as $key => $user) {
             $teste = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-            ->find(terms: ['user_id' => $user['id']], columns: "companies.*")
+            ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
             ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
             ->getResult();
 
@@ -75,9 +76,9 @@ class UserRepository implements UserRepositoryInterface
         return $users;
     }
 
-    public function save(UserModelAbstract  $user, array $company_ids): array
+    public function save(UserModelAbstract $user, array $company_ids): array
     {
-        $new_user = $this->queryBuilder->table(table: UserModelAbstract::TABLE)->create(data: $user->toArray(), table: "");
+        $new_user = $this->queryBuilder->table(table: UserModelAbstract::TABLE)->create(data: $user->toArray(), table: '');
 
         foreach ($company_ids as $company_id) {
             $new_user->create(data: ['user_id' => false, 'company_id' => $company_id], table: 'users_companies');
@@ -88,31 +89,31 @@ class UserRepository implements UserRepositoryInterface
         return $this->findById($id);
     }
 
-    public function update(UserModelAbstract $user, array $company_ids): array | bool
+    public function update(UserModelAbstract $user, array $company_ids): array|bool
     {
         $update_company = $this->queryBuilder->table(table: UserModelAbstract::TABLE)
                             ->update(data: $user->toArray())
-                            ->delete(table: "users_companies", terms: "user_id = :user_id", params: ['user_id' => (string) $user->id]);
+                            ->delete(table: 'users_companies', terms: 'user_id = :user_id', params: ['user_id' => (string) $user->id]);
 
         foreach ($company_ids as $company_id) {
-            $update_company->create(data: ['user_id' => $user->id, 'company_id' => $company_id], table: "users_companies");
+            $update_company->create(data: ['user_id' => $user->id, 'company_id' => $company_id], table: 'users_companies');
         }
 
-        if ($update_company->execute() === false) {
-            return ["user does not exist."];
+        if (false === $update_company->execute()) {
+            return ['user does not exist.'];
         }
 
         return $this->findById($user->id);
     }
 
-    public function destroy(int $id): array | bool
+    public function destroy(int $id): array|bool
     {
         $update_company = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-            ->delete(table: "", terms: "user_id = :user_id", params: ["user_id" => $id])
-            ->delete(table: "users", terms: "id = :id", params: ["id" => (string) $id]);
+            ->delete(table: '', terms: 'user_id = :user_id', params: ['user_id' => $id])
+            ->delete(table: 'users', terms: 'id = :id', params: ['id' => (string) $id]);
 
-        if ($update_company->execute() === false) {
-            return ["user does not exist."];
+        if (false === $update_company->execute()) {
+            return ['user does not exist.'];
         }
 
         return true;

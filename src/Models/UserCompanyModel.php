@@ -11,7 +11,7 @@ class UserCompanyModel extends UserCompanyModelAbstract
         return [
           'id' => $this->id,
           'user_id' => $this->user_id,
-          'company_id' => $this->company_id
+          'company_id' => $this->company_id,
         ];
     }
 }

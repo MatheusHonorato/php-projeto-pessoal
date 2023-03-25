@@ -20,7 +20,7 @@ class Uri implements UriInterface
 
     public function currentUri(): string
     {
-        return $_SERVER['REQUEST_URI'] !== '/' ? rtrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/') : '/';
+        return '/' !== $_SERVER['REQUEST_URI'] ? rtrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/') : '/';
     }
 
     public function currentRequest(): string

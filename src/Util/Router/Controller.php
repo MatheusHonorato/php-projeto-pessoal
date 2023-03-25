@@ -2,15 +2,13 @@
 
 namespace App\Util\Router;
 
-use Exception;
-
 class Controller
 {
     private function controllerPath($route, $controller): string
     {
         return ($route->getRouteOptionsInstance() && $route->getRouteOptionsInstance()->optionExist('controller')) ?
-          "App\\Controllers\\" . $route->getRouteOptionsInstance()->execute('controller') . '\\' . $controller :
-          "App\\Controllers\\" . $controller;
+          'App\\Controllers\\'.$route->getRouteOptionsInstance()->execute('controller').'\\'.$controller :
+          'App\\Controllers\\'.$controller;
     }
 
     public function call(Route $route): void
@@ -18,7 +16,7 @@ class Controller
         $controller = $route->controller;
 
         if (!str_contains($controller, ':')) {
-            throw new Exception("Colon need to controller {$controller} in route");
+            throw new \Exception("Colon need to controller {$controller} in route");
         }
 
         [$controller, $action] = explode(':', $controller);
@@ -26,13 +24,13 @@ class Controller
         $controllerInstance = $this->controllerPath($route, $controller);
 
         if (!class_exists($controllerInstance)) {
-            throw new Exception("Controller {$controller} does not exist");
+            throw new \Exception("Controller {$controller} does not exist");
         }
 
         $controller = new $controllerInstance($route->repository, $route->requestModel);
 
         if (!method_exists($controller, $action)) {
-            throw new Exception("Action {$action} does not exist");
+            throw new \Exception("Action {$action} does not exist");
         }
 
         $route->getRouteOptionsInstance();

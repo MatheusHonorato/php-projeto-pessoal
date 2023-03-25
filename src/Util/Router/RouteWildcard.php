@@ -18,10 +18,10 @@ class RouteWildcard implements RouteWildcardInterface
         $aliasesIndex = 0;
         foreach ($differenceArrays as $index => $param) {
             if (!$aliases) {
-                $this->params[array_values($explodeUri)[$index - 1]] = is_numeric($param) ? (int)$param : $param;
+                $this->params[array_values($explodeUri)[$index - 1]] = is_numeric($param) ? (int) $param : $param;
             } else {
-                $this->params[$aliases[$aliasesIndex]] = is_numeric($param) ? (int)$param : $param;
-                $aliasesIndex++;
+                $this->params[$aliases[$aliasesIndex]] = is_numeric($param) ? (int) $param : $param;
+                ++$aliasesIndex;
             }
         }
     }

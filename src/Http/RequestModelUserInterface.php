@@ -11,5 +11,5 @@ interface RequestModelUserInterface extends RequestModelInterface
 {
     public function setExtraDatas(array $value): RequestModelUser;
 
-    public function validated(HttpInterface $http): UserModel | array;
+    public function validated(HttpInterface $http): UserModel|array;
 }

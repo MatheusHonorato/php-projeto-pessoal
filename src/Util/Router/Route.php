@@ -5,7 +5,6 @@ namespace App\Util\Router;
 use App\Http\RequestModelInterface;
 use App\Repositories\RepositoryInterface;
 use App\Util\Http;
-use App\Util\Router\RouteOptions;
 
 class Route
 {

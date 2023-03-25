@@ -14,9 +14,9 @@ interface UserRepositoryInterface extends RepositoryInterface
 
     public function getAll(int $limit, int $offset): array;
 
-    public function save(UserModelAbstract  $user, array $company_ids): array;
+    public function save(UserModelAbstract $user, array $company_ids): array;
 
-    public function update(UserModelAbstract $user, array $company_ids): array | bool;
+    public function update(UserModelAbstract $user, array $company_ids): array|bool;
 
-    public function destroy(int $id): array | bool;
+    public function destroy(int $id): array|bool;
 }

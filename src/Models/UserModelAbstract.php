@@ -10,8 +10,8 @@ abstract class UserModelAbstract implements ModelInterface
 
     public function __construct(
         protected readonly ?int $id = null,
-        protected readonly string $name = "",
-        protected readonly string $email = "",
+        protected readonly string $name = '',
+        protected readonly string $email = '',
         protected readonly ?string $phone = null,
         protected readonly ?string $date = null,
         protected readonly ?string $city = null,

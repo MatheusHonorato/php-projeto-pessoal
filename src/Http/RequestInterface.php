@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Util\ValidatorAbstract;
-use stdClass;
 
 interface RequestInterface
 {
-    public static function validate(?ValidatorAbstract $validator = null, ?array $params = [], ?array $extra_datas = []): stdClass;
+    public static function validate(?ValidatorAbstract $validator = null, ?array $params = [], ?array $extra_datas = []): \stdClass;
 }

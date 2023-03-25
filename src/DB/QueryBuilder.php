@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DB;
 
-class QueryBuilder
+class QueryBuilder implements QueryBuilderInterface
 {
     const FIRST = 0;
     private string $query;
@@ -59,6 +59,7 @@ class QueryBuilder
                 } else {
                     $terms_query = $terms_query . "{$key} LIKE '%{$value}%{$or}' ";
                     $this->flag_like = true;
+                    unset($this->terms[$key]);
                 }
 
                 $index++;
@@ -180,7 +181,7 @@ class QueryBuilder
 
         $stmt = $this->db->getConnection()->prepare($this->query . $query_limit);
 
-         if($this->flag_like) {
+        if($this->flag_like) {
             try {
                 $stmt->execute();
             } catch (\Throwable) {
@@ -190,9 +191,15 @@ class QueryBuilder
         if(!$this->flag_like) {
             try {
                 $stmt->execute($this->terms);
-            } catch (\Throwable) {
+            } catch (\Throwable $th) {
             }    
         }
+
+        $this->query = "";
+        $this->join = "";
+        $this->queries_execute = [];
+        $this->terms = [];
+        $this->flag_like = false;
 
         if($stmt->rowCount() === 1) {
             return [$stmt->fetch($this->db->getConnection()::FETCH_ASSOC)];

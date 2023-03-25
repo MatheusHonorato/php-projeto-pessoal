@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Util;
 
-use App\config\DBConfig;
-use App\DB\PDOMonostate;
-use App\DB\QueryBuilder;
+use App\DB\QueryBuilderInterface;
 
 class Validator extends ValidatorAbstract
 {
+    public function __construct(
+        private QueryBuilderInterface $queryBuilder,
+        protected array $errors = [],
+    ){}
+
     public function validateRequired($value, string $fieldName): void
     {
         if(empty($value)) {
@@ -102,7 +105,7 @@ class Validator extends ValidatorAbstract
 
         $object_table = new $name_class();
 
-        $object_query_builder = (new QueryBuilder(db: new PDOMonostate(config: DBConfig::getConfig())))->table(table: $object_table::TABLE);
+        $object_query_builder = $this->queryBuilder->table(table: $object_table::TABLE);
 
         $result_query_builder = (call_user_func(array($object_query_builder, 'find'), [$fieldName => $value]))->getResult();
 

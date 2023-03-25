@@ -9,5 +9,5 @@ use stdClass;
 
 interface RequestInterface
 {
-    public static function validate(ValidatorAbstract $validator, array $params, ?array $extra_datas = []): stdClass;
+    public static function validate(?ValidatorAbstract $validator = null, ?array $params = [], ?array $extra_datas = []): stdClass;
 }

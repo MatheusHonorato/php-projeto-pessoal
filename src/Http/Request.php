@@ -15,7 +15,6 @@ class Request implements RequestInterface
         ?array $extra_datas = []
     ): stdClass
     {
-
         $GET = array_map(function($value) {
             return htmlspecialchars(string: $value);
           }, (array) $_GET);

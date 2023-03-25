@@ -6,8 +6,9 @@ namespace App\Util;
 
 class Response implements ResponseInterface
 {
-    public static function execute(array $data, int $status): object
+    public function execute(array $data, int $status): object
     {
-        return (object) ['data' => $data, 'status' => $status];
+        http_response_code($status);
+        return (object) ['status' => $status, 'data' => $data];
     }
 }

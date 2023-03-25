@@ -4,106 +4,98 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\config\DBConfig;
-use App\DB\PDOMonostate;
-use App\DB\QueryBuilder;
-use App\Http\{Request, RequestModelUser};
-use App\Models\UserModel;
-use App\Repositories\UserRepository;
-use App\Util\{Response, Validator};
+use App\Http\{RequestModelUserInterface};
+use App\Repositories\UserRepositoryInterface;
+use App\Util\{HttpInterface};
 use stdClass;
 
-class UsersController implements ControllerInterface
+class UsersController
 {
-    private static UserRepository $userRepository;
+    public function __construct(
+        private UserRepositoryInterface $userRepository,
+        private RequestModelUserInterface $requestModelUser,
+    ){}
 
-    public function __construct()
+    public function index(HttpInterface $http): object
     {
-        self::$userRepository = new UserRepository(
-            queryBuilder: new QueryBuilder(
-                db: new PDOMonostate(
-                    config: DBConfig::getConfig()
-                )
-            )
-        );
-    }
+        $requestValidated = $http->request->validate();
 
-    public function get(?string $id = null): stdClass
-    {
-        $extra_datas = ['limit' => null, 'offset' => null];
+        ['limit' => $limit, 'offset' => $offset] = (array) $requestValidated;
 
-        $request_user = Request::validate(extra_datas: $extra_datas);
-
-        $terms = (array) $_GET;
-
-        foreach ($extra_datas as $key => $value) {
-            unset($terms[$key]);
-        }
-
-        if (!is_numeric($id) && $id != null) {
-            return Response::execute(data: [], status: 200);
-        }
-
-        if($id) {
-            return Response::execute(data: self::$userRepository->findById(id: (int) $id), status: 200);
-        }
-
-        if(count($terms) > 0) {
-            return  Response::execute(data: self::$userRepository->finByParam(
-                terms: $terms, 
-                limit: (int) $request_user->limit, 
-                offset: (int) $request_user->offset),
+        unset($requestValidated->limit, $requestValidated->offset);
+    
+        if (count((array) $requestValidated) > 0) {
+            return  $http->response->execute(
+                data: $this->userRepository->finByParam(
+                    terms: (array) $requestValidated, 
+                    limit: (int) $limit, 
+                    offset: (int) $offset
+                ),
                 status: 200
             );
         }
 
-        return Response::execute(data: self::$userRepository->getAll(
-            limit: (int) $request_user->limit,
-            offset: (int) $request_user->offset),
+        return $http->response->execute(
+            data: $this->userRepository->getAll(
+                limit: (int) $limit,
+                offset: (int) $offset
+            ),
             status: 200
         );
     }
 
-    public function post(): stdClass
+    public function getById($param, HttpInterface $http): object
     {
-        $request_user = RequestModelUser::validated(
-            request: new Request,
-            validator: new Validator,
-            unique: 'unique:user'
-        );
-
-        try {
-            $user =  new UserModel(...(array) $request_user);
-        } catch (\Throwable $th) {
-            return Response::execute(data: (array) $request_user, status: 500);
+        if (!is_numeric($param['id']) && $param['id'] != null) {
+            return $http->response->execute(data: [], status: 200);
         }
 
-        return Response::execute(data: self::$userRepository->save(user: $user, company_ids: $user->company_ids), status: 201);
+        return $http->response->execute(data: $this->userRepository->findById(id: (int) $param['id']), status: 200);
     }
 
-    public function put(string $id): stdClass
+    public function store(
+        HttpInterface $http,
+    ): stdClass
     {
-        $request_user = RequestModelUser::validated(
-            request: new Request,
-            validator: new Validator,
-            extra_datas: ['id' => (int) $id],
-            unique: 'uniqueIgnoreThis:user',
-        );
-
         try {
-            $user =  new UserModel(...(array) $request_user);
-        } catch (\Throwable $th) {
-            return Response::execute(data: (array) $request_user, status: 500);
+            $user = $this->requestModelUser->validated(http: $http);
+
+            if (is_array($user) && isset($user['errors'])) {
+                return $http->response->execute(data: $user['errors'], status: 500);
+            }
+
+        } catch (\Throwable) {
+            return $http->response->execute(data: (array) $user, status: 500);
         }
         
-        return Response::execute(data: self::$userRepository->update(user: $user, company_ids: $user->company_ids), status: 200);
+        return $http->response->execute(data: $this->userRepository->save(user: $user, company_ids: $user->company_ids), status: 201);
     }
 
-    public function delete(string $id = null): stdClass
-    {   
-        if(self::$userRepository->destroy(user_id: (int) $id) === true) {
-            return Response::execute(data: [], status: 204);
+    public function update($param, HttpInterface $http): stdClass
+    {      
+        try {
+            $user = $this->requestModelUser
+                        ->setExtraDatas($param)
+                        ->setUnique('uniqueIgnoreThis:user')
+                        ->validated(http: $http);
+
+            if (is_array($user) && isset($user['errors'])) {
+                return $http->response->execute(data: $user['errors'], status: 500);
+            }
+
+        } catch (\Throwable) {
+            return $http->response->execute(data: (array) $user, status: 500);
         }
-        return Response::execute(data: [], status: 404);
+
+        return $http->response->execute(data: $this->userRepository->update(user: $user, company_ids: $user->company_ids), status: 200);
+    }
+
+    public function destroy(array $param, HttpInterface $http): stdClass
+    {   
+        if ($this->userRepository->destroy(id: (int) $param['id']) === true) {
+            return $http->response->execute(data: [], status: 204);
+        }
+
+        return $http->response->execute(data: [], status: 404);
     }
 }

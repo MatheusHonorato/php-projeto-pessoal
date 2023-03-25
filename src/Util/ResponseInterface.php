@@ -6,5 +6,5 @@ namespace App\Util;
 
 interface ResponseInterface
 {
-    public static function execute(array $data, int $status): object;
+    public function execute(array $data, int $status): object;
 }

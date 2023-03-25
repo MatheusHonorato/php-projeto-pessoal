@@ -4,26 +4,22 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\DB\QueryBuilder;
-use App\Models\{CompanyModel, ModelInterface, UserCompanyModel};
+use App\DB\QueryBuilderInterface;
+use App\Models\{CompanyModelAbstract, ModelInterface, UserCompanyModelAbstract};
 
 class CompanyRepository implements CompanyRepositoryInterface
 {
   const FIRST = 0;
-  private static QueryBuilder $queryBuilder;
+  public function __construct(private QueryBuilderInterface $queryBuilder){}
 
-  public function __construct(QueryBuilder $queryBuilder)
-  {
-    self::$queryBuilder = $queryBuilder;
-}
 
   public function findById(int $id): array
   {
-      $company = self::$queryBuilder->table(CompanyModel::TABLE)
+      $company = $this->queryBuilder->table(CompanyModelAbstract::TABLE)
                     ->findById(id: $id)
                     ->getResult();
 
-      $users = self::$queryBuilder->table(UserCompanyModel::TABLE)
+      $users = $this->queryBuilder->table(UserCompanyModelAbstract::TABLE)
                     ->find(terms: ['company_id' => $id], columns: "users.*")
                     ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
                     ->getResult();
@@ -38,7 +34,7 @@ class CompanyRepository implements CompanyRepositoryInterface
 
     public function finByParam(array $terms, int $limit, int $offset): array
     {
-        $companies = self::$queryBuilder->table(CompanyModel::TABLE);
+        $companies = $this->queryBuilder->table(CompanyModelAbstract::TABLE);
 
         if(isset($terms['user'])) {
             $companies = $companies
@@ -52,7 +48,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
 
         foreach ($companies as $key => $company) {
-            $companies[$key]['users'] = self::$queryBuilder->table(UserCompanyModel::TABLE)
+            $companies[$key]['users'] = $this->queryBuilder->table(UserCompanyModelAbstract::TABLE)
                                             ->find(terms: ['company_id' => $company['id']], columns: "users.*")
                                             ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
                                             ->getResult();
@@ -64,10 +60,10 @@ class CompanyRepository implements CompanyRepositoryInterface
 
     public function getAll(int $limit, int $offset): array
     {
-        $companies = self::$queryBuilder->table(CompanyModel::TABLE)->fetch()->getResult(limit: $limit, offset: $offset);
+        $companies = $this->queryBuilder->table(CompanyModelAbstract::TABLE)->fetch()->getResult(limit: $limit, offset: $offset);
 
         foreach ($companies as $key => $company) {
-            $companies[$key]['users'] = self::$queryBuilder->table(UserCompanyModel::TABLE)
+            $companies[$key]['users'] = $this->queryBuilder->table(UserCompanyModelAbstract::TABLE)
                                             ->find(terms: ['company_id' => $company['id']], columns: "users.*")
                                             ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
                                             ->getResult();   
@@ -78,7 +74,7 @@ class CompanyRepository implements CompanyRepositoryInterface
 
     public function save(ModelInterface $company, array $user_ids): array
     {
-        $new_company = self::$queryBuilder->table(CompanyModel::TABLE)->create(data: $company->toArray(), table: "");
+        $new_company = $this->queryBuilder->table(CompanyModelAbstract::TABLE)->create(data: $company->toArray(), table: "");
 
         foreach ($user_ids as $user_id) {
             $new_company->create(data: ['user_id' => $user_id, 'company_id' => false], table: 'users_companies');
@@ -86,13 +82,13 @@ class CompanyRepository implements CompanyRepositoryInterface
 
         $id = $new_company->execute();
 
-        return self::findById($id);
+        return $this->findById($id);
     }
 
     public function update(ModelInterface $company, array $user_ids): array | bool
     {
 
-        $update_company = self::$queryBuilder->table(UserCompanyModel::TABLE)
+        $update_company = $this->queryBuilder->table(CompanyModelAbstract::TABLE)
                             ->update(data: $company->toArray())
                             ->delete(table: "users_companies", terms: "company_id = :company_id", params: ['company_id' => (string) $company->id]);
 
@@ -101,17 +97,17 @@ class CompanyRepository implements CompanyRepositoryInterface
         }
 
         if($update_company->execute() === false) {
-            return ["company does not exist."];
+            return ["user does not exist."];
         }
 
-        return self::findById($company->id);
+        return $this->findById($company->id);
     }
 
-    public function destroy(int $company_id): array | bool
+    public function destroy(int $id): array | bool
     {
-        $update_company = self::$queryBuilder->table(UserCompanyModel::TABLE)
-            ->delete(table: "", terms: "company_id = :company_id", params: ["company_id" => $company_id])
-            ->delete(table: "companies", terms: "id = :id", params: ["id" => (string) $company_id]);
+        $update_company = $this->queryBuilder->table(UserCompanyModelAbstract::TABLE)
+            ->delete(table: "", terms: "company_id = :company_id", params: ["company_id" => $id])
+            ->delete(table: "companies", terms: "id = :id", params: ["id" => (string) $id]);
 
         if($update_company->execute() === false) {
             return ["company does not exist."];

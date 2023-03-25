@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\UserModel;
+use App\Models\UserModelAbstract;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
@@ -14,9 +14,9 @@ interface UserRepositoryInterface extends RepositoryInterface
 
     public function getAll(int $limit, int $offset): array;
 
-    public function save(UserModel $user, array $company_ids): array;
+    public function save(UserModelAbstract  $user, array $company_ids): array;
 
-    public function update(UserModel $user, array $company_ids): array | bool;
+    public function update(UserModelAbstract $user, array $company_ids): array | bool;
 
-    public function destroy(int $company_id): array | bool;
+    public function destroy(int $id): array | bool;
 }

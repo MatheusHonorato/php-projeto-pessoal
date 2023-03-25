@@ -4,18 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-class CompanyModel extends ModelAbstract
+class CompanyModel extends CompanyModelAbstract
 {
-    public const TABLE = 'companies';
-
-    public function __construct(
-        protected readonly ?int $id = null,
-        protected readonly string $name = "",
-        protected readonly string $cnpj = "",
-        protected readonly string $address = "",
-        protected readonly array $user_ids = [],
-    ) {}
-
     public function toArray(): array
     {
         return [

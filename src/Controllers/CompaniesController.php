@@ -4,102 +4,100 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\config\DBConfig;
-use App\DB\PDOMonostate;
-use App\DB\QueryBuilder;
-use App\Http\{Request, RequestModelCompany};
-use App\Models\CompanyModel;
-use App\Repositories\CompanyRepository;
-use App\Util\{Response, Validator};
+use App\Http\{RequestModelCompanyInterface};
+use App\Repositories\CompanyRepositoryInterface;
+use App\Util\{HttpInterface};
 use stdClass;
 
-class CompaniesController implements ControllerInterface
+class CompaniesController
 {
-    private static CompanyRepository $companyRepository;
+    public function __construct(
+        private CompanyRepositoryInterface $companyRepository,
+        private RequestModelCompanyInterface $requestModelCompany,
+    ){}
 
-    public function __construct()
+
+    public function index(HttpInterface $http): object
     {
-        self::$companyRepository = new CompanyRepository(
-            queryBuilder: new QueryBuilder(
-                db: new PDOMonostate(
-                    config: DBConfig::getConfig()
-                )
-            )
-        );
-    }
+        $requestValidated = $http->request->validate();
 
-    public function get(?string $id = null): stdClass
-    {
-        $extra_datas = ['limit' => null, 'offset' => null];
+        ['limit' => $limit, 'offset' => $offset] = (array) $requestValidated;
 
-        $request_user = Request::validate(extra_datas: $extra_datas);
-
-        $terms = (array) $_GET;
-
-        if(!is_numeric($id) && $id != null) {
-            return Response::execute(data: [], status: 200);
-        }
-
-        if($id) {
-            return Response::execute(data: self::$companyRepository->findById(id: (int) $id), status: 200);
-        }
-
-        if(count($terms) > 0) {
-            return Response::execute(data: self::$companyRepository->finByParam(
-                terms: $terms,
-                limit: (int) $request_user->limit,
-                offset: (int) $request_user->offset),
+        unset($requestValidated->limit, $requestValidated->offset);
+    
+        if (count((array) $requestValidated) > 0) {
+            return  $http->response->execute(
+                data: $this->companyRepository->finByParam(
+                    terms: (array) $requestValidated, 
+                    limit: (int) $limit, 
+                    offset: (int) $offset
+                ),
                 status: 200
             );
-        } 
+        }
 
-        return Response::execute(data: self::$companyRepository->getAll(
-            limit: (int) $request_user->limit,
-            offset: (int) $request_user->offset),
+        return $http->response->execute(
+            data: $this->companyRepository->getAll(
+                limit: (int) $limit,
+                offset: (int) $offset
+            ),
             status: 200
         );
     }
 
-    public function post(): stdClass
+    public function getById($param, HttpInterface $http): object
     {
-        $request_company = RequestModelCompany::validated(
-            request: new Request,
-            validator: new Validator,
-            unique: 'unique:company',
-        );           
-        
+        if (!is_numeric($param['id']) && $param['id'] != null) {
+            return $http->response->execute(data: [], status: 200);
+        }
+
+        return $http->response->execute(data: $this->companyRepository->findById(id: (int) $param['id']), status: 200);
+    }
+
+    public function store(
+        HttpInterface $http,
+    ): stdClass
+    {
         try {
-            $company =  new CompanyModel(...(array) $request_company);
+            
+            $company = $this->requestModelCompany->validated(http: $http);
+
+            if (is_array($company) && isset($company['errors'])) {
+                return $http->response->execute(data: $company['errors'], status: 500);
+            }
+
         } catch (\Throwable $th) {
-            return Response::execute(data: (array) $request_company, status: 500);
+            return $http->response->execute(data: (array) $company, status: 500);
         }
-
-        return Response::execute(data: self::$companyRepository->save(company: $company, user_ids: $company->user_ids), status: 201);
+        
+        return $http->response->execute(data: $this->companyRepository->save(company: $company, user_ids: $company->user_ids), status: 201);
     }
 
-    public function put(string $id): stdClass
-    {
-        $request_company = RequestModelCompany::validated(
-            request: new Request,
-            validator: new Validator,
-            extra_datas: ['id' => (int) $id],
-            unique: 'uniqueIgnoreThis:company',
-        );
-
+    public function update($param, HttpInterface $http): stdClass
+    {      
         try {
-            $company =  new CompanyModel(...(array) $request_company);
+            $company = $this->requestModelCompany
+                        ->setExtraDatas($param)
+                        ->setUnique('uniqueIgnoreThis:company')
+                        ->validated(http: $http);
+
+            if (is_array($company) && isset($company['errors'])) {
+                return $http->response->execute(data: $company['errors'], status: 500);
+            }
+
         } catch (\Throwable) {
-            return Response::execute(data: (array) $request_company, status: 500);
+            return $http->response->execute(data: (array) $company, status: 500);
         }
 
-        return Response::execute(data: self::$companyRepository->update(company: $company, user_ids: $company->user_ids), status: 200);
+        return $http->response->execute(data: $this->companyRepository->update(company: $company, user_ids: $company->user_ids), status: 200);
     }
 
-    public function delete(string $id = null): stdClass
-    {    
-        if(self::$companyRepository->destroy(company_id: (int) $id) === true) {
-            return Response::execute(data: [], status: 204);
+    public function destroy(array $param, HttpInterface $http): stdClass
+    {
+        if ($this->companyRepository->destroy(id: (int) $param['id']) === true) {
+            return $http->response->execute(data: [], status: 204);
         }
-        return Response::execute(data: [], status: 404);
+
+        return $http->response->execute(data: [], status: 404);
     }
 }

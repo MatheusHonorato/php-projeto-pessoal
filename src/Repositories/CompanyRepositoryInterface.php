@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\CompanyModel;
+use App\Models\CompanyModelAbstract;
 
 interface CompanyRepositoryInterface extends RepositoryInterface
 {
@@ -14,9 +14,9 @@ interface CompanyRepositoryInterface extends RepositoryInterface
 
     public function getAll(int $limit, int $offset): array;
 
-    public function save(CompanyModel $company, array $user_ids): array;
+    public function save(CompanyModelAbstract $company, array $user_ids): array;
 
-    public function update(CompanyModel $company, array $user_ids): array | bool;
+    public function update(CompanyModelAbstract $company, array $user_ids): array | bool;
 
-    public function destroy(int $company_id): array | bool;
+    public function destroy(int $id): array | bool;
 }

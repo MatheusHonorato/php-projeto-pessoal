@@ -1,8 +1,31 @@
-A aplicação tem o objetivo de implementar uma api RestFull com os recursos contatos e empresas.
+# API REST EM PHP 8.1
 
-A API Rest é desenvolvida em `php 8`.
+## ⚙️ O que é
 
-O sistema contem as seguintes entidades e seus respectivos campos:
+Api REST utilizando php orientado a objetos com tipagem forte e arquitetura model, controller. Além dos models e controllers, para um maior desacoplamento da aplicação foi aplicado a variação do padrão singleton, chamada monostate (variação que não quebra os principios SOLID), na conexão com o banco de dados para garantir que não sejam abertas varias conexões.
+Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as querys do banco de dados e repositories foram criados para as regras de negócio.
+
+## 📌 Tecnologias utilizadas:
+
+- Git
+- Docker
+- PHP 8.1.0
+- Composer 2
+- Mysql 5.7
+- phpmyadmin
+- nginx
+- Xdebug
+- PHPCS
+- PHPCS Fixer
+
+Pacotes:
+
+- vlucas/phpdotenv 5.5
+- phpunit/phpunit 10.0
+
+## Entidades
+
+A API contém as seguintes entidades e seus respectivos campos:
 
 - Usuário
     - Nome: obrigatório para preenchimento
@@ -20,9 +43,14 @@ O sistema contem as seguintes entidades e seus respectivos campos:
 
 A regra de relacionamento para `Usuário` e `Empresa` é  __n para n__
 
-### Banco
+## Modelagem
 
-O banco de dados escolhido foi o MySQL. O banco de dados MySQL já tem se consolidado no mercado como um banco de dados robusto e seguro, sendo ideal para utilização em sistemas que lidam com dados sensiveis e integridade de dados. Além disso o MySQL possui o recurso de transactions que é essencial para atomicidade das operações realizadas no banco possibilitando maior garantia de consistência dos dados. O banco mysql possui quando habilitado na criação de suas tabelas ENGINE=InnoDB, o uso de chaves estrangeiras, essencial para trabalhar com bancos que possuem diferentes entidades relacionadas.
+### Diagrama E.R.
+
+### Tabelas banco de dados
+
+<img src="db.png" width="70%">
+
 
 ## Tutorial de como rodar a aplicação:
 
@@ -182,42 +210,3 @@ UserDelete
     Método: DELETE
 
     Endeeço: http://localhost:8000/users/1
-
-
-## Um pouco sobre a aplicação (API)
-
-Stack utilizada:
-
-- Git
-- Docker
-- PHP 8.1.0
-- Composer 2
-- Mysql 5.7
-- phpmyadmin
-- nginx
-- Xdebug
-- PHPCS
-- PHPCS Fixer
-
-Pacotes:
-
-- vlucas/phpdotenv 5.5
-- phpunit/phpunit 10.0
-
-Descrição
-
-A aplicação foi desenvolvida utilizando php orientado a objetos com tipagem forte e arquitetura model, controller. Além dos models e controllers para um maior desacoplamento da aplicação foi aplicado a variação do padrão singleton chamada monostate (variação que não quebra os principios SOLID), na conexão com o banco de dados para garantir que não sejam abertas varias conexões desnecessarias com o banco.
-Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as querys do banco de dados e repositories foram criados para que os controllers não ficassem inchados com regras de negócio. O sistema de roteamento da api é feito carregando os controladores a partir dos endereços das rotas com o respectivo método http ex: rota 'users' utilizando o método http 'get' carrega o  método de nome 'get' no controlador 'UsersController'.
-
-## Pricipais dificuldades e duvidas
-
-A principal dificuldade durante o processo de desenvolvimento foi trabalhar com uma abstração para o banco de dados. No desenvolvimento da aplicação tive a ideia de utilizar o query buildar para abstrair as consultas do banco e deixar o software mais desacoplado, o que acabou levando um bom tempo de desenvolvimento e na minha opinião um certo overenginner.
-
-## Melhorias propostas
-
-- Adicionar diagrama das das classes
-- Adicionar tabelas dos bancos
-- Rodar PHPCS
-- Refatoração do query builder
-- Refatoração do sistema de rotas
-- Implementação de testes

@@ -188,16 +188,21 @@ class QueryBuilder implements QueryBuilderInterface
             }
         }
 
-        $this->query = '';
-        $this->join = '';
-        $this->queries_execute = [];
-        $this->terms = [];
-        $this->flag_like = false;
+        $this->reset();
 
         if (1 === $stmt->rowCount()) {
             return [$stmt->fetch($this->db->getConnection()::FETCH_ASSOC)];
         }
 
         return $stmt->fetchAll($this->db->getConnection()::FETCH_ASSOC);
+    }
+
+    private function reset(): void
+    {
+        $this->query = '';
+        $this->join = '';
+        $this->queries_execute = [];
+        $this->terms = [];
+        $this->flag_like = false;
     }
 }

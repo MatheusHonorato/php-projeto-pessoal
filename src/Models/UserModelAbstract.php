@@ -16,7 +16,8 @@ abstract class UserModelAbstract implements ModelInterface
         protected readonly ?string $date = null,
         protected readonly ?string $city = null,
         protected readonly ?array $company_ids = [],
-    ) {}
+    ) {
+    }
 
     abstract public function toArray(): array;
 

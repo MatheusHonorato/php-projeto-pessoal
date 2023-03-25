@@ -8,7 +8,8 @@ abstract class ValidatorAbstract implements ValidatorInterface
 {
     public function __construct(
         protected array $errors = [],
-    ){}
+    ) {
+    }
 
     public function getErrors(): array
     {

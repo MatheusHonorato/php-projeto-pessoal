@@ -14,7 +14,8 @@ class CompaniesController
     public function __construct(
         private CompanyRepositoryInterface $companyRepository,
         private RequestModelCompanyInterface $requestModelCompany,
-    ){}
+    ) {
+    }
 
 
     public function index(HttpInterface $http): object
@@ -24,12 +25,12 @@ class CompaniesController
         ['limit' => $limit, 'offset' => $offset] = (array) $requestValidated;
 
         unset($requestValidated->limit, $requestValidated->offset);
-    
+
         if (count((array) $requestValidated) > 0) {
             return  $http->response->execute(
                 data: $this->companyRepository->finByParam(
-                    terms: (array) $requestValidated, 
-                    limit: (int) $limit, 
+                    terms: (array) $requestValidated,
+                    limit: (int) $limit,
                     offset: (int) $offset
                 ),
                 status: 200
@@ -56,25 +57,22 @@ class CompaniesController
 
     public function store(
         HttpInterface $http,
-    ): stdClass
-    {
+    ): stdClass {
         try {
-            
             $company = $this->requestModelCompany->validated(http: $http);
 
             if (is_array($company) && isset($company['errors'])) {
                 return $http->response->execute(data: $company['errors'], status: 500);
             }
-
         } catch (\Throwable $th) {
             return $http->response->execute(data: (array) $company, status: 500);
         }
-        
+
         return $http->response->execute(data: $this->companyRepository->save(company: $company, user_ids: $company->user_ids), status: 201);
     }
 
     public function update($param, HttpInterface $http): stdClass
-    {      
+    {
         try {
             $company = $this->requestModelCompany
                         ->setExtraDatas($param)
@@ -84,7 +82,6 @@ class CompaniesController
             if (is_array($company) && isset($company['errors'])) {
                 return $http->response->execute(data: $company['errors'], status: 500);
             }
-
         } catch (\Throwable) {
             return $http->response->execute(data: (array) $company, status: 500);
         }

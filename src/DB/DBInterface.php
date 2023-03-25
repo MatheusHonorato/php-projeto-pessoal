@@ -8,5 +8,5 @@ interface DBInterface
 {
     public function __construct(object $config);
 
-    public function getConnection (): object;
+    public function getConnection(): object;
 }

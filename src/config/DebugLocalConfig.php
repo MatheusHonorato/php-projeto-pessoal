@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\config;
 
 class DebugLocalConfig implements DebugConfigInterface
-{    
+{
     private static int $initSetDisplayErrorsTrue = 1;
     private static int $initSetDisplayStartupErrorsTrue = 1;
 

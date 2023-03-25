@@ -13,35 +13,34 @@ class Request implements RequestInterface
         ?ValidatorInterface $validator = null,
         ?array $params = [],
         ?array $extra_datas = []
-    ): stdClass
-    {
-        $GET = array_map(function($value) {
+    ): stdClass {
+        $GET = array_map(function ($value) {
             return htmlspecialchars(string: $value);
-          }, (array) $_GET);
+        }, (array) $_GET);
 
         $request = (object) array_merge(
             (array) json_decode(
                 file_get_contents(filename: 'php://input', use_include_path : true)
-            ), 
+            ),
             (array) $extra_datas,
             (array) $GET
         );
 
-        if(!$validator)
+        if (!$validator) {
             return $request;
+        }
 
         foreach ($params as $key => $rules) {
             $request->$key = isset($request->$key) ? $request->$key : null;
 
             foreach ($rules as $rule) {
-
                 $value_rule = strpos($rule, ":") ? explode(":", $rule) : null;
 
                 $rule_terms = is_array($value_rule) ? (array) explode("-", $value_rule[0]) : (array) $rule;
 
-                $rule_terms = array_map(function($term) {
+                $rule_terms = array_map(function ($term) {
                     return ucfirst($term);
-                  }, $rule_terms);
+                }, $rule_terms);
 
                 $lastNameMethod = implode("", $rule_terms);
 
@@ -50,8 +49,9 @@ class Request implements RequestInterface
                 isset($value_rule[1]) ? $model = $value_rule[1] : $model = '';
                 isset($value_rule[2]) ? $foreign_key = $value_rule[2] : $foreign_key = '';
 
-                if($lastNameMethod == 'UniqueIgnoreThis')
+                if ($lastNameMethod == 'UniqueIgnoreThis') {
                     $ignoreThisParam = ['id' => $extra_datas['id']];
+                }
 
                 $value_rule == null ? $value_param = $request->$key : $value_param = (object) ['model' => $model, 'value' => $request->$key, 'foreign_key' =>  $foreign_key, 'ignoreThisParam' => $ignoreThisParam];
 
@@ -59,7 +59,7 @@ class Request implements RequestInterface
             }
         }
 
-        if($validator->getErrors()) {
+        if ($validator->getErrors()) {
             return (object) $validator->getErrors();
         }
 

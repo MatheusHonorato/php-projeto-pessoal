@@ -9,9 +9,11 @@ use App\Models\{UserModelAbstract, UserCompanyModelAbstract};
 
 class UserRepository implements UserRepositoryInterface
 {
-    const FIRST = 0;
+    public const FIRST = 0;
 
-    public function __construct(private QueryBuilderInterface $queryBuilder){}
+    public function __construct(private QueryBuilderInterface $queryBuilder)
+    {
+    }
 
     public function findById(int $id): array
     {
@@ -23,7 +25,7 @@ class UserRepository implements UserRepositoryInterface
                         ->find(terms: ['user_id' => $id], columns: "companies.*")
                         ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
                         ->getResult();
-        
+
         $user ? $user[self::FIRST]['companies'] = $companies : '';
 
         if (count($user) > 0) {
@@ -43,38 +45,37 @@ class UserRepository implements UserRepositoryInterface
                         ->join(table_join: 'users_companies', keys: ['users.id', 'users_companies.user_id'])
                         ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
                         ->getResult(limit: $limit, offset: $offset);
-        }   
-        else {
+        } else {
             $users = $users->find(terms: $terms)->getResult(limit: $limit, offset: $offset);
         }
 
         foreach ($users as $key => $user) {
-             $users[$key]['companies'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-                                                ->find(terms: ['user_id' => $user['id']], columns: "companies.*")
-                                                ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
-                                                ->getResult();
+            $users[$key]['companies'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
+                                               ->find(terms: ['user_id' => $user['id']], columns: "companies.*")
+                                               ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
+                                               ->getResult();
         }
 
         return $users;
     }
 
-    public function getAll (int $limit, int $offset): array
+    public function getAll(int $limit, int $offset): array
     {
         $users = $this->queryBuilder->table(table: UserModelAbstract::TABLE)->fetch()->getResult(limit: $limit, offset: $offset);
-        
+
         foreach ($users as $key => $user) {
             $teste = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
             ->find(terms: ['user_id' => $user['id']], columns: "companies.*")
             ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
-            ->getResult(); 
+            ->getResult();
 
             $users[$key]['companies'] = $teste;
-        }                
+        }
 
         return $users;
     }
 
-    public function save (UserModelAbstract  $user, array $company_ids): array
+    public function save(UserModelAbstract  $user, array $company_ids): array
     {
         $new_user = $this->queryBuilder->table(table: UserModelAbstract::TABLE)->create(data: $user->toArray(), table: "");
 
@@ -87,7 +88,7 @@ class UserRepository implements UserRepositoryInterface
         return $this->findById($id);
     }
 
-    public function update (UserModelAbstract $user, array $company_ids): array | bool
+    public function update(UserModelAbstract $user, array $company_ids): array | bool
     {
         $update_company = $this->queryBuilder->table(table: UserModelAbstract::TABLE)
                             ->update(data: $user->toArray())
@@ -97,7 +98,7 @@ class UserRepository implements UserRepositoryInterface
             $update_company->create(data: ['user_id' => $user->id, 'company_id' => $company_id], table: "users_companies");
         }
 
-        if($update_company->execute() === false) {
+        if ($update_company->execute() === false) {
             return ["user does not exist."];
         }
 

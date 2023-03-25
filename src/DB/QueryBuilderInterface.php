@@ -8,17 +8,17 @@ interface QueryBuilderInterface
 {
     public function table(string $table): QueryBuilder;
 
-    public function find (
+    public function find(
         ?array $terms = null,
         ?array $params = null,
         string $columns = "*",
     ): QueryBuilder;
-    
+
     public function findById(int $id): QueryBuilder;
 
     public function fetch(): QueryBuilder;
 
-    public function create(array $data, string $table = ""): QueryBuilder; 
+    public function create(array $data, string $table = ""): QueryBuilder;
 
     public function update(array $data, string $table = ""): QueryBuilder;
 

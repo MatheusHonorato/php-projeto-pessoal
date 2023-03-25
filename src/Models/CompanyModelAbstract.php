@@ -14,7 +14,8 @@ abstract class CompanyModelAbstract implements ModelInterface
         protected readonly string $cnpj = "",
         protected readonly string $address = "",
         protected readonly array $user_ids = [],
-    ) {}
+    ) {
+    }
 
     abstract public function toArray(): array;
 

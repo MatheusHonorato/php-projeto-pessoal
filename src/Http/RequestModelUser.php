@@ -15,7 +15,8 @@ class RequestModelUser implements RequestModelUserInterface
         private string $model,
         private string $unique = "unique:user",
         private ?array $extra_datas = ["id" => null]
-    ) {}
+    ) {
+    }
 
     public function setExtraDatas(array $value): RequestModelUser
     {
@@ -42,9 +43,9 @@ class RequestModelUser implements RequestModelUserInterface
                 'company_ids' => ['required', 'uniqueArray', 'foreignKey:company:id'],
             ],
             extra_datas: $this->extra_datas,
-        );      
-        
-        if(!array_key_exists('id', $validated)){
+        );
+
+        if (!array_key_exists('id', $validated)) {
             return ['errors' => $validated];
         }
 

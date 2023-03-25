@@ -195,6 +195,9 @@ Stack utilizada:
 - Mysql 5.7
 - phpmyadmin
 - nginx
+- Xdebug
+- PHPCS
+- PHPCS Fixer
 
 Pacotes:
 

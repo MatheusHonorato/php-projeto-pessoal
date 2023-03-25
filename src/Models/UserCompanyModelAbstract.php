@@ -12,7 +12,8 @@ abstract class UserCompanyModelAbstract implements ModelInterface
         protected readonly int|null $id,
         protected readonly int $user_id,
         protected readonly int $company_id,
-    ) {}
+    ) {
+    }
 
     abstract public function toArray(): array;
 

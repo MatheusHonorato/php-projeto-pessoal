@@ -6,7 +6,7 @@ namespace App\DB;
 
 class QueryBuilder implements QueryBuilderInterface
 {
-    const FIRST = 0;
+    public const FIRST = 0;
     private string $query;
     private string $join;
     private array $queries_execute = [];
@@ -16,8 +16,7 @@ class QueryBuilder implements QueryBuilderInterface
 
     public function __construct(
         private DBInterface $db,
-    )
-    {
+    ) {
         $this->query = "";
         $this->join = "";
     }
@@ -28,33 +27,29 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    public function find (
+    public function find(
         ?array $terms = null,
         ?array $params = null,
         string $columns = "*",
-    ): QueryBuilder
-    {
+    ): QueryBuilder {
         $this->terms = $terms;
 
         $and = " or ";
         $terms_query = "";
 
         $index = 1;
-        if($params == null) {
+        if ($params == null) {
             $params = $this->terms;
             foreach ($params as $key => $value) {
-
                 (($index) >= count($params)) ? $and = '' : false;
 
                 (($index) >= count($params)) ? $or = '' : false;
 
-                if(is_array($value))
-                {
+                if (is_array($value)) {
                     $this->terms[$key] = implode(", ", $value);
                     $terms_query = $terms_query . "{$key} IN ({$this->terms[$key]}){$and} ";
                     unset($terms[$key]);
-                }
-                else if (strpos($key, 'id') !== false) {
+                } elseif (strpos($key, 'id') !== false) {
                     $terms_query = $terms_query . "{$key} = :{$key}{$and} ";
                 } else {
                     $terms_query = $terms_query . "{$key} LIKE '%{$value}%{$or}' ";
@@ -65,7 +60,7 @@ class QueryBuilder implements QueryBuilderInterface
                 $index++;
             }
         }
-        
+
         $this->query = "SELECT DISTINCT {$columns} FROM {$this->table} WHERE {$terms_query}";
 
         return $this;
@@ -73,30 +68,30 @@ class QueryBuilder implements QueryBuilderInterface
 
     public function findById(int $id): QueryBuilder
     {
-      return $this->find(terms: ['id' => $id]);
+        return $this->find(terms: ['id' => $id]);
     }
 
     public function fetch(): QueryBuilder
-    {   
+    {
         $this->query = "SELECT * FROM {$this->table}";
-        
+
         return $this;
     }
 
     public function create(array $data, string $table = ""): QueryBuilder
     {
-        $table=="" ? $table = $this->table : ''; 
-    
+        $table=="" ? $table = $this->table : '';
+
         $columns = implode(", ", array_keys($data));
         $values = ":" . implode(", :", array_keys($data));
         $this->queries_execute[] = ["query" => "INSERT INTO {$table} ({$columns}) VALUES ({$values})", "params" => $data];
 
         return $this;
-    }   
+    }
 
     public function update(array $data, string $table = ""): QueryBuilder
     {
-        $table=="" ? $table = $this->table : ''; 
+        $table=="" ? $table = $this->table : '';
 
         $columns = "";
         $comma = ",";
@@ -115,7 +110,7 @@ class QueryBuilder implements QueryBuilderInterface
 
     public function delete(string $terms, array $params, string $table = ""): QueryBuilder
     {
-        $table=="" ? $table = $this->table : ''; 
+        $table=="" ? $table = $this->table : '';
 
         $this->queries_execute[] = ["query" => "DELETE FROM {$table} WHERE {$terms}", "params" => $params];
 
@@ -131,15 +126,14 @@ class QueryBuilder implements QueryBuilderInterface
             $this->db->getConnection()->beginTransaction();
 
             foreach ($this->queries_execute as $query_execute) {
-
-                if($query_execute["params"]) {
+                if ($query_execute["params"]) {
                     foreach ($query_execute["params"] as $key => $value) {
-                        if($value == false) {
+                        if ($value == false) {
                             $query_execute["params"][$key] = $last_insert_id;
                         }
                     }
                 }
-                    
+
 
                 $stmt = $this->db->getConnection()->prepare($query_execute["query"]);
 
@@ -150,12 +144,11 @@ class QueryBuilder implements QueryBuilderInterface
             }
 
             $this->db->getConnection()->commit();
-
         } catch (\Exception) {
             return false;
-        }     
-        
-        if($stmt->rowCount() == 0) {
+        }
+
+        if ($stmt->rowCount() == 0) {
             return false;
         }
 
@@ -175,24 +168,24 @@ class QueryBuilder implements QueryBuilderInterface
 
         ($limit != 0 && $offset != 0) ? $query_limit = " LIMIT $limit OFFSET $offset" : '';
 
-        if($this->join!="" && $this->join!=null && strpos($this->query, "WHERE")) {
+        if ($this->join!="" && $this->join!=null && strpos($this->query, "WHERE")) {
             $this->query = str_replace("WHERE", "$this->join WHERE", $this->query);
         }
 
         $stmt = $this->db->getConnection()->prepare($this->query . $query_limit);
 
-        if($this->flag_like) {
+        if ($this->flag_like) {
             try {
                 $stmt->execute();
             } catch (\Throwable) {
-            }    
+            }
         }
 
-        if(!$this->flag_like) {
+        if (!$this->flag_like) {
             try {
                 $stmt->execute($this->terms);
             } catch (\Throwable $th) {
-            }    
+            }
         }
 
         $this->query = "";
@@ -201,10 +194,10 @@ class QueryBuilder implements QueryBuilderInterface
         $this->terms = [];
         $this->flag_like = false;
 
-        if($stmt->rowCount() === 1) {
+        if ($stmt->rowCount() === 1) {
             return [$stmt->fetch($this->db->getConnection()::FETCH_ASSOC)];
         }
-        
+
         return $stmt->fetchAll($this->db->getConnection()::FETCH_ASSOC);
     }
 }

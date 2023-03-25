@@ -17,19 +17,16 @@ class PDOMonostate implements DBInterface
         self::$config = $config;
     }
 
-    public function getConnection (): object
+    public function getConnection(): object
     {
-        if(empty(self::$connection))
-        {
+        if (empty(self::$connection)) {
             try {
                 self::$connection = new PDO(
                     self::$config->DB_CONNECTION.":host=".self::$config->DB_HOST.";dbname=".self::$config->DB_NAME,
                     self::$config->DB_USER,
                     self::$config->DB_PASSWORD
                 );
-
             } catch (PDOException $exception) {
-
                 throw new PDOException($exception->getMessage());
             }
         }

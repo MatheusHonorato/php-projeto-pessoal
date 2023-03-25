@@ -15,7 +15,8 @@ class RequestModelCompany implements RequestModelCompanyInterface
         private string $model,
         private string $unique = "unique:company",
         private ?array $extra_datas = ["id" => null]
-    ) {}
+    ) {
+    }
 
     public function setExtraDatas(array $value): RequestModelCompany
     {
@@ -42,7 +43,7 @@ class RequestModelCompany implements RequestModelCompanyInterface
             extra_datas: $this->extra_datas,
         );
 
-        if(!array_key_exists('id', $validated)){
+        if (!array_key_exists('id', $validated)) {
             return ['errors' => $validated];
         }
 

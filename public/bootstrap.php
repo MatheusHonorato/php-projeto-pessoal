@@ -29,6 +29,6 @@ $debug = "App\config\Debug".ucfirst(string: getenv('APP_ENV'))."Config";
 
 $debug::set();
 
-$http = new Http(request: new Request, response: new Response, validator: new Validator(queryBuilder: $queryBuilder));
+$http = new Http(request: new Request(), response: new Response(), validator: new Validator(queryBuilder: $queryBuilder));
 
 $router = new Router(http: $http);

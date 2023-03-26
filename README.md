@@ -5,7 +5,7 @@
 Api REST utilizando php orientado a objetos com tipagem forte e arquitetura model, controller. Além dos models e controllers, para um maior desacoplamento da aplicação foi aplicado a variação do padrão singleton, chamada monostate (variação que não quebra os principios SOLID), na conexão com o banco de dados para garantir que não sejam abertas varias conexões.
 Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as querys do banco de dados e repositories foram criados para as regras de negócio.
 
-## 📌 Tecnologias utilizadas:
+## 📌 Tecnologias
 
 - Git
 - Docker
@@ -23,7 +23,7 @@ Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as 
     - vlucas/phpdotenv 5.5
     - phpunit/phpunit 10.0
 
-PSRS Utilizadas:
+## PSR's
 
 Na codificação do projeto foi utilizado o Symfony Coding Standards que aplica as PSR's: 1, 2, 4 e 12 
 

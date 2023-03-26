@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\config;
 
-class DebugLocalConfig implements DebugConfigInterface
+class DebugProductionConfig implements DebugConfigInterface
 {
-    private static int $initSetDisplayErrorsTrue = 1;
-    private static int $initSetDisplayStartupErrorsTrue = 1;
+    private static int $initSetDisplayErrorsTrue = 0;
+    private static int $initSetDisplayStartupErrorsTrue = 0;
     private static int $initSetErrorReportingTrue = 1;
     private static int $initSetLogErrorsTrue = 1;
 

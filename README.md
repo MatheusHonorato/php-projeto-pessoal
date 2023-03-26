@@ -18,12 +18,16 @@ Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as 
 - PHPCS
 - PHPCS Fixer
 
-Pacotes:
+- 📦 Pacotes:
 
-- vlucas/phpdotenv 5.5
-- phpunit/phpunit 10.0
+    - vlucas/phpdotenv 5.5
+    - phpunit/phpunit 10.0
 
-## Entidades
+PSRS Utilizadas:
+
+Na codificação do projeto foi utilizado o Symfony Coding Standards que aplica as PSR's: 1, 2, 4 e 12 
+
+## 📝 Entidades
 
 A API contém as seguintes entidades e seus respectivos campos:
 
@@ -51,47 +55,59 @@ A regra de relacionamento para `Usuário` e `Empresa` é  __n para n__
 
 <img src="db.png" width="70%">
 
+## 🏛️ Arquitetura
 
-## Tutorial de como rodar a aplicação:
+
+
+## 👨‍🏫 Tutorial de como rodar a aplicação:
 
 ### Softwares necessários
 
-- Docker
-- Docker-Compose
+- 🐳 Docker
+- 👾 Docker-Compose
 
-### Paso a passo
+#### Paso a passo
 
 - Instalando
 
-Se possui o git instalado:
+    - Se possui o git instalado:
 
-Clone o repositório em: https://github.com/MatheusHonorato/php-projeto-pessoal
+        - Clone o repositório em: https://github.com/MatheusHonorato/php-projeto-pessoal
 
-Se não possui o git instalado:
+    - Se não possui o git instalado:
 
-Acesse:  https://github.com/MatheusHonorato/php-projeto-pessoal
+        - Acesse:  https://github.com/MatheusHonorato/php-projeto-pessoal
 
-Clique em: CODE > Download ZIP
+        - Clique em: CODE > Download ZIP
 
 - Rodando a api
 
-Após efetuar o download do projeto é necessário executar os seguintes passos:
+    Após efetuar o download do projeto é necessário executar os seguintes passos:
 
-- Habilite a instalação do seu docker
-- Acesse a raiz do projeto e rode: 'docker run build' para fazer o build do arquivo Dockerfile
-- copie o arquivo '.env-example' e renomeie para '.env'
-- Após o build rode o comando: 'docker-compose up -d' para subir os containers, rodar a aplicação e o script build para criar as tabelas no banco e inserir dados default.
-- Acesse o bash do container php com o comando 'docker exec -ti app bash' e rode o comando 'composer install' para instalar as dependencias do projeto.
-- Aguarde alguns segundos e acesse o servidor da aplicação que estará disponível em: 'http://localhost:8000'
-- Se ocorrer algum erro rode 'docker-compose ps' e verifique a coluna 'State' de cada container, se alguma não estiver como 'Up' provavelmente alguma porta já está sendo utilizada no sistema,
-para resolver de forma rapida e conseguir testar a aplicação altere as portas utilizadas pelos containers no arquivo docker-compose.yml, rode 'docker-compose down' e inicie o processo novamente.
-- A API pode ser testada de maneira isolada em softwares como o insomnia ou postman.
+    - Habilite a instalação do seu docker;
+    - Acesse a raiz do projeto e rode: 'docker run build' para fazer o build do arquivo Dockerfile;
+    - Copie o arquivo `.env-example` e renomeie para `.env`;
+    - Após o build rode o comando: 'docker-compose up -d' para subir os containers, rodar a aplicação e o script build para criar as tabelas no banco e inserir dados default;
+    - Acesse o bash do container php com o comando: 
+    ```bash docker exec -ti app``` e rode o comando: ```bash composer install``` para instalar as dependencias do projeto;
+    - Aguarde alguns segundos e acesse o servidor da aplicação que estará disponível em: http://localhost:8000;
+    - Se ocorrer algum erro rode ```bash docker-compose ps``` e verifique a coluna `State` de cada container, se alguma não estiver como `Up` provavelmente alguma porta já está sendo utilizada no sistema,
+para resolver de forma rapida e conseguir testar a aplicação altere as portas utilizadas pelos containers no arquivo docker-compose.yml, rode ```bash docker-compose down``` e inicie o processo novamente.
+    - A API pode ser testada de maneira isolada em softwares como o insomnia ou postman.
 
 - Rodando testes
 
-Para rodar os testes é necessário acessar o container docker onde o php está sendo interpretado utilizando o seguinte comando: 'docker exec -ti app bash'. Em seguinda execute o comando 'vendor/bin/phpunit tests/' para rodar os testes.
+    Para rodar os testes é necessário acessar o container docker onde o php está sendo interpretado utilizando o seguinte comando: ```bash docker exec -ti app bash```. Em seguinda execute o comando ```bash vendor/bin/phpunit tests/``` para rodar os testes.
 
-Para verificar a cobertura dos testes passe a flag '--coverage-text'
+    Para verificar a cobertura dos testes passe a flag ```bash --coverage-text```
+
+- Rodando PHPCS
+
+    Para rodar o PHP CS acesse o container app como descrito anteriormente e então execute: ```bash php vendor/bin/phpcs src``` & ```bash php vendor/bin/phpcs public```
+
+- Rodando PHPCS Fixer
+
+    Para rodar o PHP CS Fixer acesse o container app como descrito anteriormente e então execute: ```bash php vendor/bin/php-cs-fixer fix src``` & ```bash php vendor/bin/php-cs-fixer fix public```
 
 # Rotas API:
 

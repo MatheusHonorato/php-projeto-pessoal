@@ -1,9 +1,5 @@
 FROM php:8.1.0-fpm
 
-#Xdebug
-#COPY 90-xdebug.ini "${PHP_INI_DIR}/conf.d"
-#RUN pecl install xdebug
-
 # Arguments defined in docker-compose.yml
 ARG user
 ARG uid

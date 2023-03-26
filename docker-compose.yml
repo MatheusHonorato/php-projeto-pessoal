@@ -7,8 +7,6 @@ services:
         uid: 1000
       context: ./
       dockerfile: Dockerfile
-    #extra_hosts:
-     # - "host.docker.internal:host-gateway"
     image: app-php
     container_name: app
     restart: unless-stopped

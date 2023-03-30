@@ -66,9 +66,8 @@ class Route
             $this->routeWildcard->paramsToArray($this->uri->getUri(), $wildcardReplaced, $this->wildcardAliases);
         }
 
-        if (
-            $this->uri->getUri() === $this->uri->currentUri() &&
-            strtolower($this->method) === $this->uri->currentRequest()
+        if ($this->uri->getUri() === $this->uri->currentUri()
+            && strtolower($this->method) === $this->uri->currentRequest()
         ) {
             return $this;
         }

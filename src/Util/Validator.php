@@ -42,7 +42,8 @@ class Validator extends ValidatorAbstract
             value: $value->value,
             fieldName: $fieldName,
             ignoreThisParam: $value->ignoreThisParam
-        ) > 1) {
+        ) > 1
+        ) {
             $this->addError(error: "{$fieldName} unique is required");
         }
     }

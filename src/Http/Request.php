@@ -13,9 +13,12 @@ class Request implements RequestInterface
         ?array $params = [],
         ?array $extra_datas = []
     ): \stdClass {
-        $GET = array_map(function ($value) {
-            return htmlspecialchars(string: $value);
-        }, (array) $_GET);
+        $GET = array_map(
+            function ($value) {
+                return htmlspecialchars(string: $value);
+            },
+            (array) $_GET
+        );
 
         $request = (object) array_merge(
             (array) json_decode(
@@ -37,9 +40,12 @@ class Request implements RequestInterface
 
                 $rule_terms = is_array($value_rule) ? (array) explode('-', $value_rule[0]) : (array) $rule;
 
-                $rule_terms = array_map(function ($term) {
-                    return ucfirst($term);
-                }, $rule_terms);
+                $rule_terms = array_map(
+                    function ($term) {
+                        return ucfirst($term);
+                    },
+                    $rule_terms
+                );
 
                 $lastNameMethod = implode('', $rule_terms);
 

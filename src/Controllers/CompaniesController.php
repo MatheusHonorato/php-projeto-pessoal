@@ -73,9 +73,9 @@ class CompaniesController
     {
         try {
             $company = $this->requestModelCompany
-                        ->setExtraDatas($param)
-                        ->setUnique('uniqueIgnoreThis:company')
-                        ->validated(http: $http);
+                ->setExtraDatas($param)
+                ->setUnique('uniqueIgnoreThis:company')
+                ->validated(http: $http);
 
             if (is_array($company) && isset($company['errors'])) {
                 return $http->response->execute(data: $company['errors'], status: 500);

@@ -73,9 +73,9 @@ class UsersController
     {
         try {
             $user = $this->requestModelUser
-                        ->setExtraDatas($param)
-                        ->setUnique('uniqueIgnoreThis:user')
-                        ->validated(http: $http);
+                ->setExtraDatas($param)
+                ->setUnique('uniqueIgnoreThis:user')
+                ->validated(http: $http);
 
             if (is_array($user) && isset($user['errors'])) {
                 return $http->response->execute(data: $user['errors'], status: 500);

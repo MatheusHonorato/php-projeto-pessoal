@@ -23,10 +23,6 @@ Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as 
     - vlucas/phpdotenv 5.5
     - phpunit/phpunit 10.0
 
-## PSR's
-
-Na codificação do projeto foi utilizado o Symfony Coding Standards que aplica as PSR's: 1, 2, 4 e 12 
-
 ## 📝 Entidades
 
 A API contém as seguintes entidades e seus respectivos campos:
@@ -54,6 +50,41 @@ A regra de relacionamento para `Usuário` e `Empresa` é  __n para n__
 ### 🛢 Tabelas banco de dados
 
 <img src="db.png" width="70%">
+
+## 🏛️ Arquitetura
+
+📦api-rest  
+┣ 📂docker-compose  
+┃ ┗ 📜k6-load-testing-results.json  
+┣ 📂public  
+┃ ┗ 📜img.png  
+┣ 📂src  
+┃ ┣ 📂Controllers  
+┃ ┃ ┣ 📜login.request.js  
+┃ ┃ ┣ 📜products.request.js  
+┃ ┃ ┗ 📜users.request.js  
+┃ ┣ 📂DB  
+┃ ┃ ┣ 📜FullFlowLoad.test.js  
+┃ ┃ ┗ 📜FullFlowStress.test.js 
+┃ ┣ 📂Http 
+┃ ┣ 📂Models 
+┃ ┣ 📂Repositories 
+┃ ┗ 📂Util  
+┃ ┃ ┗ 📜utils.js 
+┃ ┗ 📂config
+┃ ┗ 📂routes
+┣ 📂tests
+┃ ┗ 📜img.png
+┣ 📜.env-example 
+┣ 📜.gitignore  
+┣ 📜README.md  
+┣ 📜90-xdebug.ini
+┣ 📜Dockerfile
+┣ 📜README.md
+┣ 📜composer.json 
+┣ 📜composer.lock
+┣ 📜docker-compose.yml  
+┣ 📜phpunit.xml
 
 ## 👨‍🏫 Tutorial de como rodar a aplicação:
 
@@ -100,6 +131,10 @@ para resolver de forma rapida e conseguir testar a aplicação altere as portas 
 - Rodando PHPCS
 
     Para rodar o PHP CS acesse o container app como descrito anteriormente e então execute: ```bash php vendor/bin/phpcs src``` & ```bash php vendor/bin/phpcs public```
+
+- Rodando PHPCBF
+
+    Para rodar o PHP CS acesse o container app como descrito anteriormente e então execute: ```bash php vendor/bin/phpcbf src``` & ```bash php vendor/bin/phpcbf public```
 
 - Rodando PHPCS Fixer
 

@@ -19,13 +19,13 @@ class UserRepository implements UserRepositoryInterface
     public function findById(int $id): array
     {
         $user = $this->queryBuilder->table(table: UserModelAbstract::TABLE)
-                ->findById(id: $id)
-                ->getResult();
+            ->findById(id: $id)
+            ->getResult();
 
         $companies = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-                        ->find(terms: ['user_id' => $id], columns: 'companies.*')
-                        ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
-                        ->getResult();
+            ->find(terms: ['user_id' => $id], columns: 'companies.*')
+            ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
+            ->getResult();
 
         $user ? $user[self::FIRST]['companies'] = $companies : '';
 
@@ -42,19 +42,19 @@ class UserRepository implements UserRepositoryInterface
 
         if (isset($terms['company'])) {
             $users = $users
-                        ->find(terms: ['companies.name' => $terms['company']], columns: 'users.*')
-                        ->join(table_join: 'users_companies', keys: ['users.id', 'users_companies.user_id'])
-                        ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
-                        ->getResult(limit: $limit, offset: $offset);
+                ->find(terms: ['companies.name' => $terms['company']], columns: 'users.*')
+                ->join(table_join: 'users_companies', keys: ['users.id', 'users_companies.user_id'])
+                ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
+                ->getResult(limit: $limit, offset: $offset);
         } else {
             $users = $users->find(terms: $terms)->getResult(limit: $limit, offset: $offset);
         }
 
         foreach ($users as $key => $user) {
             $users[$key]['companies'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-                                               ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
-                                               ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
-                                               ->getResult();
+                ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
+                ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
+                ->getResult();
         }
 
         return $users;
@@ -66,9 +66,9 @@ class UserRepository implements UserRepositoryInterface
 
         foreach ($users as $key => $user) {
             $teste = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
-            ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
-            ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
-            ->getResult();
+                ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
+                ->join(table_join: 'companies', keys: ['companies.id', 'users_companies.company_id'])
+                ->getResult();
 
             $users[$key]['companies'] = $teste;
         }
@@ -92,8 +92,8 @@ class UserRepository implements UserRepositoryInterface
     public function update(UserModelAbstract $user, array $company_ids): array|bool
     {
         $update_company = $this->queryBuilder->table(table: UserModelAbstract::TABLE)
-                            ->update(data: $user->toArray())
-                            ->delete(table: 'users_companies', terms: 'user_id = :user_id', params: ['user_id' => (string) $user->id]);
+            ->update(data: $user->toArray())
+            ->delete(table: 'users_companies', terms: 'user_id = :user_id', params: ['user_id' => (string) $user->id]);
 
         foreach ($company_ids as $company_id) {
             $update_company->create(data: ['user_id' => $user->id, 'company_id' => $company_id], table: 'users_companies');

@@ -14,13 +14,13 @@ class RequestModelUser implements RequestModelUserInterface
         private ValidatorInterface $validator,
         private string $model,
         private string $unique = 'unique:user',
-        private ?array $extra_datas = ['id' => null]
+        private ?array $extraDatas = ['id' => null]
     ) {
     }
 
     public function setExtraDatas(array $value): RequestModelUser
     {
-        $this->extra_datas = $value;
+        $this->extraDatas = $value;
 
         return $this;
     }
@@ -44,7 +44,7 @@ class RequestModelUser implements RequestModelUserInterface
                 'city' => ['required', 'string'],
                 'company_ids' => ['required', 'uniqueArray', 'foreignKey:company:id'],
             ],
-            extra_datas: $this->extra_datas,
+            extraDatas: $this->extraDatas,
         );
 
         if (!array_key_exists(key: 'id', array: $validated)) {

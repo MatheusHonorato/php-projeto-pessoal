@@ -26,7 +26,7 @@ interface QueryBuilderInterface
 
     public function execute(): int|bool;
 
-    public function join(string $table_join, array $keys): QueryBuilder;
+    public function join(string $tableJoin, array $keys): QueryBuilder;
 
     public function getResult(int $limit = 0, int $offset = 0): array;
 }

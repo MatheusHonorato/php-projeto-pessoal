@@ -76,4 +76,4 @@ $container->bind(CompaniesController::class, function() use ($container) {
     return new CompaniesController($container->make(key: CompanyRepository::class), $container->make(key: RequestModelCompany::class));
 });
 
-$router = new Router(routes: $routes, container: $container);
+$router = new Router(routes: $routes, container: $container, request: $container->make(key: Http::class)->request);

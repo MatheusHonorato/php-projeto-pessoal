@@ -9,10 +9,12 @@ class QueryBuilder implements QueryBuilderInterface
     public const FIRST = 0;
     private string $query;
     private string $join;
-    private array $queries_execute = [];
+    private array $queriesExecute = [];
     private array $terms = [];
-    private bool $flag_like = false;
+    private bool $flagLike = false;
     private string $table;
+    public const ORIGIN_TABLE = 0;
+    public const DESTINY_TABLE = 1;
 
     public function __construct(
         private DBInterface $db,
@@ -36,7 +38,7 @@ class QueryBuilder implements QueryBuilderInterface
         $this->terms = $terms;
 
         $and = ' or ';
-        $terms_query = '';
+        $termsQuery = '';
 
         $index = 1;
         if (null == $params) {
@@ -48,13 +50,13 @@ class QueryBuilder implements QueryBuilderInterface
 
                 if (is_array($value)) {
                     $this->terms[$key] = implode(', ', $value);
-                    $terms_query = $terms_query."{$key} IN ({$this->terms[$key]}){$and} ";
+                    $termsQuery = $termsQuery."{$key} IN ({$this->terms[$key]}){$and} ";
                     unset($terms[$key]);
                 } elseif (false !== strpos($key, 'id')) {
-                    $terms_query = $terms_query."{$key} = :{$key}{$and} ";
+                    $termsQuery = $termsQuery."{$key} = :{$key}{$and} ";
                 } else {
-                    $terms_query = $terms_query."{$key} LIKE '%{$value}%{$or}' ";
-                    $this->flag_like = true;
+                    $termsQuery = $termsQuery."{$key} LIKE '%{$value}%{$or}' ";
+                    $this->flagLike = true;
                     unset($this->terms[$key]);
                 }
 
@@ -62,7 +64,7 @@ class QueryBuilder implements QueryBuilderInterface
             }
         }
 
-        $this->query = "SELECT DISTINCT {$columns} FROM {$this->table} WHERE {$terms_query}";
+        $this->query = "SELECT DISTINCT {$columns} FROM {$this->table} WHERE {$termsQuery}";
 
         return $this;
     }
@@ -85,7 +87,7 @@ class QueryBuilder implements QueryBuilderInterface
 
         $columns = implode(', ', array_keys($data));
         $values = ':'.implode(', :', array_keys($data));
-        $this->queries_execute[] = ['query' => "INSERT INTO {$table} ({$columns}) VALUES ({$values})", 'params' => $data];
+        $this->queriesExecute[] = ['query' => "INSERT INTO {$table} ({$columns}) VALUES ({$values})", 'params' => $data];
 
         return $this;
     }
@@ -104,7 +106,7 @@ class QueryBuilder implements QueryBuilderInterface
             ++$index;
         }
 
-        $this->queries_execute[] = ['query' => "UPDATE {$table} SET {$columns} WHERE id = :id", 'params' => $data];
+        $this->queriesExecute[] = ['query' => "UPDATE {$table} SET {$columns} WHERE id = :id", 'params' => $data];
 
         return $this;
     }
@@ -113,33 +115,33 @@ class QueryBuilder implements QueryBuilderInterface
     {
         '' == $table ? $table = $this->table : '';
 
-        $this->queries_execute[] = ['query' => "DELETE FROM {$table} WHERE {$terms}", 'params' => $params];
+        $this->queriesExecute[] = ['query' => "DELETE FROM {$table} WHERE {$terms}", 'params' => $params];
 
         return $this;
     }
 
     public function execute(): int|bool
     {
-        $last_insert_id = 0;
+        $lastInsertId = 0;
         $count = 0;
 
         try {
             $this->db->getConnection()->beginTransaction();
 
-            foreach ($this->queries_execute as $query_execute) {
-                if ($query_execute['params']) {
-                    foreach ($query_execute['params'] as $key => $value) {
+            foreach ($this->queriesExecute as $queryExecute) {
+                if ($queryExecute['params']) {
+                    foreach ($queryExecute['params'] as $key => $value) {
                         if (false == $value) {
-                            $query_execute['params'][$key] = $last_insert_id;
+                            $queryExecute['params'][$key] = $lastInsertId;
                         }
                     }
                 }
 
-                $stmt = $this->db->getConnection()->prepare($query_execute['query']);
+                $stmt = $this->db->getConnection()->prepare($queryExecute['query']);
 
-                $stmt->execute($query_execute['params']);
+                $stmt->execute($queryExecute['params']);
 
-                (0 == $count) ? $last_insert_id = $this->db->getConnection()->lastInsertId() : '';
+                (0 == $count) ? $lastInsertId = $this->db->getConnection()->lastInsertId() : '';
                 ++$count;
             }
 
@@ -152,39 +154,39 @@ class QueryBuilder implements QueryBuilderInterface
             return false;
         }
 
-        return (int) $last_insert_id;
+        return (int) $lastInsertId;
     }
 
-    public function join(string $table_join, array $keys): QueryBuilder
+    public function join(string $tableJoin, array $keys): QueryBuilder
     {
-        $this->join = $this->join." JOIN $table_join ON $keys[0] = $keys[1] ";
+        $this->join = $this->join." JOIN $tableJoin ON ".$keys[self::ORIGIN_TABLE]." = ".$keys[self::DESTINY_TABLE];
 
         return $this;
     }
 
     public function getResult(int $limit = 0, int $offset = 0): array
     {
-        $query_limit = '';
+        $queryLimit = '';
 
-        (0 != $limit && 0 != $offset) ? $query_limit = " LIMIT $limit OFFSET $offset" : '';
+        (0 != $limit && 0 != $offset) ? $queryLimit = " LIMIT $limit OFFSET $offset" : '';
 
         if ('' != $this->join && null != $this->join && strpos($this->query, 'WHERE')) {
             $this->query = str_replace('WHERE', "$this->join WHERE", $this->query);
         }
 
-        $stmt = $this->db->getConnection()->prepare($this->query.$query_limit);
+        $stmt = $this->db->getConnection()->prepare($this->query.$queryLimit);
 
-        if ($this->flag_like) {
+        if ($this->flagLike) {
             try {
                 $stmt->execute();
             } catch (\Throwable) {
             }
         }
 
-        if (!$this->flag_like) {
+        if (!$this->flagLike) {
             try {
                 $stmt->execute($this->terms);
-            } catch (\Throwable $th) {
+            } catch (\Throwable) {
             }
         }
 
@@ -201,8 +203,8 @@ class QueryBuilder implements QueryBuilderInterface
     {
         $this->query = '';
         $this->join = '';
-        $this->queries_execute = [];
+        $this->queriesExecute = [];
         $this->terms = [];
-        $this->flag_like = false;
+        $this->flagLike = false;
     }
 }

@@ -12,7 +12,7 @@ class Container
 
     public static function instance(): Container
     {
-        if (is_null(self::$instance)) {
+        if (is_null(value: self::$instance)) {
             self::$instance = new Container();
         }
 

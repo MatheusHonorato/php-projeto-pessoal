@@ -14,13 +14,13 @@ class RequestModelCompany implements RequestModelCompanyInterface
         private ValidatorInterface $validator,
         private string $model,
         private string $unique = 'unique:company',
-        private ?array $extra_datas = ['id' => null]
+        private ?array $extraDatas = ['id' => null]
     ) {
     }
 
     public function setExtraDatas(array $value): RequestModelCompany
     {
-        $this->extra_datas = $value;
+        $this->extraDatas = $value;
 
         return $this;
     }
@@ -42,7 +42,7 @@ class RequestModelCompany implements RequestModelCompanyInterface
                 'address' => ['required', 'string'],
                 'user_ids' => ['required', 'uniqueArray', 'foreignKey:user:id'],
             ],
-            extra_datas: $this->extra_datas,
+            extraDatas: $this->extraDatas,
         );
 
         if (!array_key_exists(key: 'id', array: $validated)) {

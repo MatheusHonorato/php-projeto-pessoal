@@ -25,7 +25,7 @@ class CompanyRepository implements CompanyRepositoryInterface
 
         $users = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
             ->find(terms: ['company_id' => $id], columns: 'users.*')
-            ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
+            ->join(tableJoin: 'users', keys: ['users.id', 'users_companies.user_id'])
             ->getResult();
 
         $company ? $company[self::FIRST]['users'] = $users : '';
@@ -44,8 +44,8 @@ class CompanyRepository implements CompanyRepositoryInterface
         if (isset($terms['user'])) {
             $companies = $companies
                 ->find(terms: ['users.name' => $terms['user']], columns: 'companies.*')
-                ->join(table_join: 'users_companies', keys: ['companies.id', 'users_companies.company_id'])
-                ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
+                ->join(tableJoin: 'users_companies', keys: ['companies.id', 'users_companies.company_id'])
+                ->join(tableJoin: 'users', keys: ['users.id', 'users_companies.user_id'])
                 ->getResult(limit: $limit, offset: $offset);
         } else {
             $companies = $companies->find(terms: $terms)->getResult(limit: $limit, offset: $offset);
@@ -54,7 +54,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         foreach ($companies as $key => $company) {
             $companies[$key]['users'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
                 ->find(terms: ['company_id' => $company['id']], columns: 'users.*')
-                ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
+                ->join(tableJoin: 'users', keys: ['users.id', 'users_companies.user_id'])
                 ->getResult();
         }
 
@@ -68,7 +68,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         foreach ($companies as $key => $company) {
             $companies[$key]['users'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
                 ->find(terms: ['company_id' => $company['id']], columns: 'users.*')
-                ->join(table_join: 'users', keys: ['users.id', 'users_companies.user_id'])
+                ->join(tableJoin: 'users', keys: ['users.id', 'users_companies.user_id'])
                 ->getResult();
         }
 

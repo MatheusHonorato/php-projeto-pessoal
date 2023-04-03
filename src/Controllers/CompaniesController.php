@@ -6,7 +6,7 @@ namespace App\Controllers;
 
 use App\Http\{RequestModelCompanyInterface};
 use App\Repositories\CompanyRepositoryInterface;
-use App\Util\{HttpInterface};
+use App\Util\{Helper, HttpInterface};
 
 class CompaniesController
 {
@@ -18,11 +18,7 @@ class CompaniesController
 
     public function index(HttpInterface $http): object
     {
-        $requestValidated = $http->request->validate();
-
-        ['limit' => $limit, 'offset' => $offset] = (array) $requestValidated;
-
-        unset($requestValidated->limit, $requestValidated->offset);
+        [$requestValidated, $limit, $offset] = Helper::validatedPaginate($http->request->validate());
 
         if (count((array) $requestValidated) > 0) {
             return $http->response->execute(

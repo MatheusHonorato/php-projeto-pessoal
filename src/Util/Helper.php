@@ -26,7 +26,7 @@ class Helper
         ['limit' => $limit, 'offset' => $offset] = (array) $requestValidated;
 
         unset($requestValidated->limit, $requestValidated->offset);
-        
+
         return [$requestValidated, $limit, $offset];
     }
 }

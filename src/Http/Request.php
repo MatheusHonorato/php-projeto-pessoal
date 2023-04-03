@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http;
 
 use App\Util\ValidatorInterface;
+use stdClass;
 
 class Request implements RequestInterface
 {
@@ -13,20 +14,7 @@ class Request implements RequestInterface
         ?array $params = [],
         ?array $extraDatas = []
     ): \stdClass {
-        $GET = array_map(
-            function ($value) {
-                return htmlspecialchars(string: $value);
-            },
-            (array) $_GET
-        );
-
-        $request = (object) array_merge(
-            (array) json_decode(
-                json: file_get_contents(filename: 'php://input', use_include_path : true)
-            ),
-            (array) $extraDatas,
-            (array) $GET
-        );
+        $request = self::getValuesAll($extraDatas);
 
         if (!$validator) {
             return $request;
@@ -77,5 +65,25 @@ class Request implements RequestInterface
     public static function getUri(): string
     {
         return $_SERVER['REQUEST_URI'];
+    }
+
+    private static function getValuesAll(array $extraDatas): stdClass
+    {
+        $GET = array_map(
+            function ($value) {
+                return htmlspecialchars(string: $value);
+            },
+            (array) $_GET
+        );
+
+        $request = (object) array_merge(
+            (array) json_decode(
+                json: file_get_contents(filename: 'php://input', use_include_path : true)
+            ),
+            (array) $extraDatas,
+            (array) $GET
+        );
+
+        return $request;
     }
 }

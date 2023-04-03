@@ -44,13 +44,9 @@ class CompaniesController
         );
     }
 
-    public function getById($param, HttpInterface $http): object
+    public function getById(int $id, HttpInterface $http): object
     {
-        if (!is_numeric($param['id']) && null != $param['id']) {
-            return $http->response->execute(data: [], status: 200);
-        }
-
-        return $http->response->execute(data: $this->companyRepository->findById(id: (int) $param['id']), status: 200);
+        return $http->response->execute(data: $this->companyRepository->findById(id: $id), status: 200);
     }
 
     public function store(
@@ -62,18 +58,18 @@ class CompaniesController
             if (is_array($company) && isset($company['errors'])) {
                 return $http->response->execute(data: $company['errors'], status: 500);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable) {
             return $http->response->execute(data: (array) $company, status: 500);
         }
 
         return $http->response->execute(data: $this->companyRepository->save(company: $company, user_ids: $company->user_ids), status: 201);
     }
 
-    public function update($param, HttpInterface $http): \stdClass
+    public function update(int $id, HttpInterface $http): \stdClass
     {
         try {
             $company = $this->requestModelCompany
-                ->setExtraDatas($param)
+                ->setExtraDatas(['id' => $id])
                 ->setUnique('uniqueIgnoreThis:company')
                 ->validated(http: $http);
 
@@ -87,9 +83,9 @@ class CompaniesController
         return $http->response->execute(data: $this->companyRepository->update(company: $company, user_ids: $company->user_ids), status: 200);
     }
 
-    public function destroy(array $param, HttpInterface $http): \stdClass
+    public function destroy(int $id, HttpInterface $http): \stdClass
     {
-        if (true === $this->companyRepository->destroy(id: (int) $param['id'])) {
+        if (true === $this->companyRepository->destroy(id: $id)) {
             return $http->response->execute(data: [], status: 204);
         }
 

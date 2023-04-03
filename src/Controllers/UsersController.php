@@ -44,13 +44,9 @@ class UsersController
         );
     }
 
-    public function getById($param, HttpInterface $http): object
+    public function getById(int $id, HttpInterface $http): object
     {
-        if (!is_numeric($param['id']) && null != $param['id']) {
-            return $http->response->execute(data: [], status: 200);
-        }
-
-        return $http->response->execute(data: $this->userRepository->findById(id: (int) $param['id']), status: 200);
+        return $http->response->execute(data: $this->userRepository->findById(id: $id), status: 200);
     }
 
     public function store(
@@ -69,11 +65,11 @@ class UsersController
         return $http->response->execute(data: $this->userRepository->save(user: $user, company_ids: $user->company_ids), status: 201);
     }
 
-    public function update($param, HttpInterface $http): \stdClass
+    public function update(int $id, HttpInterface $http): \stdClass
     {
         try {
             $user = $this->requestModelUser
-                ->setExtraDatas($param)
+                ->setExtraDatas(['id' => $id])
                 ->setUnique('uniqueIgnoreThis:user')
                 ->validated(http: $http);
 
@@ -87,9 +83,9 @@ class UsersController
         return $http->response->execute(data: $this->userRepository->update(user: $user, company_ids: $user->company_ids), status: 200);
     }
 
-    public function destroy(array $param, HttpInterface $http): \stdClass
+    public function destroy(int $id, HttpInterface $http): \stdClass
     {
-        if (true === $this->userRepository->destroy(id: (int) $param['id'])) {
+        if (true === $this->userRepository->destroy(id: $id)) {
             return $http->response->execute(data: [], status: 204);
         }
 

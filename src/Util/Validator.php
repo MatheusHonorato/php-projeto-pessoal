@@ -100,7 +100,7 @@ class Validator extends ValidatorAbstract
     {
         $namespace = "App\Models\\";
 
-        $name_class = $namespace.ucfirst("{$model}Model");
+        $name_class = $namespace.ucfirst(string: "{$model}Model");
 
         $object_table = new $name_class();
 

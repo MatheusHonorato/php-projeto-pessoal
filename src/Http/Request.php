@@ -22,7 +22,7 @@ class Request implements RequestInterface
 
         $request = (object) array_merge(
             (array) json_decode(
-                file_get_contents(filename: 'php://input', use_include_path : true)
+                json: file_get_contents(filename: 'php://input', use_include_path : true)
             ),
             (array) $extra_datas,
             (array) $GET
@@ -33,12 +33,11 @@ class Request implements RequestInterface
         }
 
         foreach ($params as $key => $rules) {
-            $request->$key = isset($request->$key) ? $request->$key : null;
 
             foreach ($rules as $rule) {
-                $value_rule = strpos($rule, ':') ? explode(':', $rule) : null;
+                $value_rule = strpos(haystack: $rule, needle: ':') ? explode(separator: ':', string: $rule) : null;
 
-                $rule_terms = is_array($value_rule) ? (array) explode('-', $value_rule[0]) : (array) $rule;
+                $rule_terms = is_array(value: $value_rule) ? (array) explode(separator: '-', string: $value_rule[0]) : (array) $rule;
 
                 $rule_terms = array_map(
                     function ($term) {
@@ -47,7 +46,7 @@ class Request implements RequestInterface
                     $rule_terms
                 );
 
-                $lastNameMethod = implode('', $rule_terms);
+                $lastNameMethod = implode(separator: '', array: $rule_terms);
 
                 $ignoreThisParam = [];
 
@@ -58,7 +57,7 @@ class Request implements RequestInterface
                     $ignoreThisParam = ['id' => $extra_datas['id']];
                 }
 
-                null == $value_rule ? $value_param = $request->$key : $value_param = (object) ['model' => $model, 'value' => $request->$key, 'foreign_key' => $foreign_key, 'ignoreThisParam' => $ignoreThisParam];
+                null == $value_rule ? $value_param = $request?->$key : $value_param = (object) ['model' => $model, 'value' => $request?->$key, 'foreign_key' => $foreign_key, 'ignoreThisParam' => $ignoreThisParam];
 
                 call_user_func([$validator, 'validate'.$lastNameMethod], $value_param, $key);
             }

@@ -8,7 +8,7 @@ class Response implements ResponseInterface
 {
     public function execute(array $data, int $status): object
     {
-        http_response_code($status);
+        http_response_code(response_code: $status);
 
         return (object) ['status' => $status, 'data' => $data];
     }

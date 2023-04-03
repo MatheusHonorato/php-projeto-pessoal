@@ -49,7 +49,7 @@ A regra de relacionamento para `Usuário` e `Empresa` é  __n para n__
 
 ### 🛢 Tabelas banco de dados
 
-<img src="db.png" width="70%">
+<img src="./docs/db.png" width="70%">
 
 ## 🏛️ Arquitetura
 

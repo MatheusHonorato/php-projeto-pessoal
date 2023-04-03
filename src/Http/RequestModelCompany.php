@@ -45,7 +45,7 @@ class RequestModelCompany implements RequestModelCompanyInterface
             extra_datas: $this->extra_datas,
         );
 
-        if (!array_key_exists('id', $validated)) {
+        if (!array_key_exists(key: 'id', array: $validated)) {
             return ['errors' => $validated];
         }
 

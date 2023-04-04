@@ -24,7 +24,7 @@ class Router
             [$isCurrentRoute, $params] = $this->getCurrentRouteData(routeMethod: $route['method'], uri: $route['uri']);
 
             if ($isCurrentRoute) {
-                [$controller, $method] = self::getControllerAndMethod($route['action'], $namespace);
+                [$controller, $method] = self::getControllerAndMethod(controllerAndMehtodName: $route['action'], namespace: $namespace);
 
                 $params[] = $this->container->make(key: Http::class);
 

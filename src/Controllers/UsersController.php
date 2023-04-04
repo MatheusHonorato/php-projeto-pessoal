@@ -20,12 +20,12 @@ class UsersController
     {
         [$requestValidated, $limit, $offset] = Helper::validatedPaginate($http->request->validate());
 
-        if (count((array) $requestValidated) > 0) {
+        if (count($requestValidated) > 0) {
             return $http->response->execute(
                 data: $this->userRepository->finByParam(
-                    terms: (array) $requestValidated,
-                    limit: (int) $limit,
-                    offset: (int) $offset
+                    terms: $requestValidated,
+                    limit: $limit,
+                    offset: $offset
                 ),
                 status: 200
             );
@@ -33,8 +33,8 @@ class UsersController
 
         return $http->response->execute(
             data: $this->userRepository->getAll(
-                limit: (int) $limit,
-                offset: (int) $offset
+                limit: $limit,
+                offset: $offset
             ),
             status: 200
         );

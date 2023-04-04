@@ -27,9 +27,7 @@ class Request implements RequestInterface
                 $ruleTerms = is_array(value: $valueRule) ? (array) explode(separator: '-', string: $valueRule[0]) : (array) $rule;
 
                 $ruleTerms = array_map(
-                    function ($term) {
-                        return ucfirst($term);
-                    },
+                    fn ($term) => ucfirst($term),
                     $ruleTerms
                 );
 
@@ -57,7 +55,7 @@ class Request implements RequestInterface
         return $request;
     }
 
-    public static function getMethod(): string
+    public static function getHttpMethod(): string
     {
         return $_SERVER['REQUEST_METHOD'];
     }

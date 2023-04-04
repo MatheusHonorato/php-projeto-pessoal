@@ -14,7 +14,7 @@ class Request implements RequestInterface
         ?array $params = [],
         ?array $extraDatas = []
     ): \stdClass {
-        $request = self::getValuesAll($extraDatas);
+        $request = self::getParams($extraDatas);
 
         if (!$validator) {
             return $request;
@@ -67,7 +67,7 @@ class Request implements RequestInterface
         return $_SERVER['REQUEST_URI'];
     }
 
-    private static function getValuesAll(array $extraDatas): stdClass
+    private static function getParams(array $extraDatas): stdClass
     {
         $GET = array_map(
             function ($value) {

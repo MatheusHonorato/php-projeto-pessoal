@@ -65,12 +65,10 @@ class UserRepository implements UserRepositoryInterface
         $users = $this->queryBuilder->table(table: UserModelAbstract::TABLE)->fetch()->getResult(limit: $limit, offset: $offset);
 
         foreach ($users as $key => $user) {
-            $teste = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
+            $users[$key]['companies'] = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
                 ->find(terms: ['user_id' => $user['id']], columns: 'companies.*')
                 ->join(tableJoin: 'companies', keys: ['companies.id', 'users_companies.company_id'])
                 ->getResult();
-
-            $users[$key]['companies'] = $teste;
         }
 
         return $users;

@@ -12,5 +12,5 @@ interface RequestInterface
 
     public static function getHttpMethod(): string;
 
-    public static function getUri(): string;
+    public static function getCurrentUri(): string;
 }

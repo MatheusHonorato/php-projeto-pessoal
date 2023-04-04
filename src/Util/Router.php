@@ -68,13 +68,13 @@ class Router
         return [$validateRoute, $params];
     }
 
-    private function isMatchUri(string $uri): array
+    private function isMatchUri(string $routeUri): array
     {
-        $replaced = Helper::regExInParamsRequest(string: $uri);
+        $replaced = Helper::regExInParamsRequest(string: $routeUri);
 
         $pattern = "/^{$replaced}[a-z0-9&\?\=]*$/i";
 
-        $validateRoute = preg_match(pattern: $pattern, subject: $this->request::getUri(), matches: $matches);
+        $validateRoute = preg_match(pattern: $pattern, subject: $this->request::getCurrentUri(), matches: $matches);
 
         unset($matches[0]);
 

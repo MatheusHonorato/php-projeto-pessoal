@@ -60,7 +60,7 @@ class Request implements RequestInterface
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    public static function getUri(): string
+    public static function getCurrentUri(): string
     {
         return $_SERVER['REQUEST_URI'];
     }

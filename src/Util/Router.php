@@ -21,22 +21,14 @@ class Router
         $namespace = "App\Controllers";
 
         foreach ($this->routes as $route) {
-            $replaced = Helper::regExInParamsRequest(string: $route['uri']);
+            [$isCurrentRoute, $params] = $this->getCurrentRouteData(routeMethod: $route['method'], uri: $route['uri']);
 
-            $pattern = "/^{$replaced}[a-z0-9&\?\=]*$/i";
-
-            $validateRoute = preg_match(pattern: $pattern, subject: $this->request::getUri(), matches: $params);
-
-            if ($validateRoute && $this->request::getHttpMethod() == $route['method']) {
-                unset($params[0]);
-
-                [$resource, $action] = explode("@", $route['action']);
-
-                $controller = $namespace . '\\' . ucfirst($resource);
+            if ($isCurrentRoute) {
+                [$controller, $method] = self::getControllerAndMethod($route['action'], $namespace);
 
                 $params[] = $this->container->make(key: Http::class);
 
-                $resultApi = Helper::methodObjectCall($this->container, $controller, $action, $params);
+                $resultApi = Helper::methodObjectCall($this->container, $controller, $method, $params);
 
                 if (count($resultApi->data) == 0) {
                     echo json_encode((new Response())->execute(status: 404, data: ['Not Found']));
@@ -50,5 +42,42 @@ class Router
 
         echo json_encode((new Response())->execute(status: 404, data: ['Not Found']));
         return;
+    }
+
+    private static function getControllerAndMethod(string $controllerAndMehtodName, string $namespace): array
+    {
+        [$resource, $method] = explode("@", $controllerAndMehtodName);
+
+        $controller = $namespace . '\\' . ucfirst($resource);
+
+        return [$controller, $method];
+    }
+
+    private function getCurrentRouteData(string $routeMethod, string $uri): bool|array
+    {
+        if ($this->request::getHttpMethod() != $routeMethod) {
+            return false;
+        }
+
+        [$validateRoute, $params] = $this->isMatchUri($uri);
+
+        if (!$validateRoute) {
+            return false;
+        }
+
+        return [$validateRoute, $params];
+    }
+
+    private function isMatchUri(string $uri): array
+    {
+        $replaced = Helper::regExInParamsRequest(string: $uri);
+
+        $pattern = "/^{$replaced}[a-z0-9&\?\=]*$/i";
+
+        $validateRoute = preg_match(pattern: $pattern, subject: $this->request::getUri(), matches: $matches);
+
+        unset($matches[0]);
+
+        return [$validateRoute, $matches];
     }
 }

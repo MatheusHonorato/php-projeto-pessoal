@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace App\Util;
 
-use App\Http\RequestInterface;
-
 class Router
 {
     public function __construct(
         private array $routes,
-        private RequestInterface $request,
         private Container $container,
+        private Http $http,
     ) {
         $this->getRequestRoute();
     }
 
-    private function getRequestRoute()
+    private function getRequestRoute(): void
     {
         $namespace = "App\Controllers";
 
@@ -24,9 +22,9 @@ class Router
             [$isCurrentRoute, $params] = $this->getCurrentRouteData(routeMethod: $route['method'], uri: $route['uri']);
 
             if ($isCurrentRoute) {
-                [$controller, $method] = self::getControllerAndMethod(controllerAndMehtodName: $route['action'], namespace: $namespace);
+                [$controller, $method] = self::generateNameControllerAndMethod(controllerAndMehtodName: $route['action'], namespace: $namespace);
 
-                $params[] = $this->container->make(key: Http::class);
+                $params[] = $this->http;
 
                 $resultApi = Helper::methodObjectCall($this->container, $controller, $method, $params);
 
@@ -44,7 +42,7 @@ class Router
         return;
     }
 
-    private static function getControllerAndMethod(string $controllerAndMehtodName, string $namespace): array
+    private static function generateNameControllerAndMethod(string $controllerAndMehtodName, string $namespace): array
     {
         [$resource, $method] = explode("@", $controllerAndMehtodName);
 
@@ -55,7 +53,7 @@ class Router
 
     private function getCurrentRouteData(string $routeMethod, string $uri): bool|array
     {
-        if ($this->request::getHttpMethod() != $routeMethod) {
+        if ($this->http->request::getHttpMethod() != $routeMethod) {
             return false;
         }
 
@@ -70,14 +68,27 @@ class Router
 
     private function isMatchUri(string $routeUri): array
     {
-        $replaced = Helper::regExInParamsRequest(string: $routeUri);
+        $replaced = self::regExInParamsRoute(string: $routeUri);
 
         $pattern = "/^{$replaced}[a-z0-9&\?\=]*$/i";
 
-        $validateRoute = preg_match(pattern: $pattern, subject: $this->request::getCurrentUri(), matches: $matches);
+        $validateRoute = preg_match(pattern: $pattern, subject: $this->http->request::getCurrentUri(), matches: $matches);
 
         unset($matches[0]);
 
         return [$validateRoute, $matches];
+    }
+
+    private static function regExInParamsRoute(string $string): string
+    {
+        $string = str_replace('/', '\/', $string);
+
+        $string = str_replace('{numeric}', "([0-9]+)", $string);
+
+        $string = str_replace('{alpha}', '([a-zA-Z]+)', $string);
+
+        $string = str_replace('{any}', '([a-zA-Z0-9\-]+)', $string);
+
+        return $string;
     }
 }

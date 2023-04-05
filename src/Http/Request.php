@@ -68,9 +68,7 @@ class Request implements RequestInterface
     private static function getParams(array $extraDatas): stdClass
     {
         $GET = array_map(
-            function ($value) {
-                return htmlspecialchars(string: $value);
-            },
+            fn ($value) => htmlspecialchars(string: $value),
             (array) $_GET
         );
 

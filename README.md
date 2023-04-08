@@ -23,6 +23,15 @@ Uma versão simplificada do padrão querybuilder foi utilizada para abstrair as 
     - vlucas/phpdotenv 5.5
     - phpunit/phpunit 10.0
 
+## Conceitos implementados
+
+- Models
+- Controllers
+- Routes
+- Design Patterns (Singleton, Repository, Query Builder, Injeção de dependencia, Container Ioc, Front Controller)
+- PHP: Constructor property promotion, named paramters, arrow functions, strict types, readonly
+- Regex
+
 ## 📝 Entidades
 
 A API contém as seguintes entidades e seus respectivos campos:

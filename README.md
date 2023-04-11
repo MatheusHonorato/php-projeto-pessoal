@@ -266,3 +266,19 @@ UserDelete
     Método: DELETE
 
     Endeeço: http://localhost:8000/users/1
+
+## Refatorar
+
+- Relacionamentos de associação (agregação) nas models
+- Request.php
+- Validator.php
+- QueryBuilder.php
+- Exceções
+- Segregar Contato de Pessoa
+- Segregar Endereço de Pessoa
+- Aplicar: https://github.com/MatheusHonorato/clean-code-php
+- Terminar diagrama arquitetura
+- Adicionar diagrama E.R.
+- Adicionar diagrama de classes
+- Revisar OWASP
+- Testes unitários e de integração

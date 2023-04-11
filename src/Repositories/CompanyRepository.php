@@ -6,7 +6,6 @@ namespace App\Repositories;
 
 use App\DB\QueryBuilderInterface;
 use App\Models\CompanyModelAbstract;
-use App\Models\ModelInterface;
 use App\Models\UserCompanyModelAbstract;
 
 class CompanyRepository implements CompanyRepositoryInterface
@@ -75,7 +74,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         return $companies;
     }
 
-    public function save(ModelInterface $company, array $user_ids): array
+    public function save(CompanyModelAbstract $company, array $user_ids): array
     {
         $new_company = $this->queryBuilder->table(table: CompanyModelAbstract::TABLE)->create(data: $company->toArray(), table: '');
 
@@ -88,7 +87,7 @@ class CompanyRepository implements CompanyRepositoryInterface
         return $this->findById($id);
     }
 
-    public function update(ModelInterface $company, array $user_ids): array|bool
+    public function update(CompanyModelAbstract $company, array $user_ids): array|bool
     {
         $update_company = $this->queryBuilder->table(table: CompanyModelAbstract::TABLE)
             ->update(data: $company->toArray())

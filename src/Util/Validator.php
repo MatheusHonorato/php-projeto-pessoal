@@ -106,7 +106,7 @@ class Validator extends ValidatorAbstract
 
         $objectQueryBuilder = $this->queryBuilder->table(table: $objectTable::TABLE);
 
-        $resultQueryBuilder = call_user_func([$objectQueryBuilder, 'find'], [$fieldName => $value])->getResult();
+        $resultQueryBuilder = ($objectQueryBuilder->find([$fieldName => $value]))->getResult();
 
         foreach ($ignoreThisParam as $key => $value) {
             foreach ($resultQueryBuilder as $resultQueryBuilderValue) {

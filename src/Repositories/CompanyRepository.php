@@ -106,11 +106,11 @@ class CompanyRepository implements CompanyRepositoryInterface
 
     public function destroy(int $id): array|bool
     {
-        $update_company = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
+        $delete_company = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
             ->delete(table: '', terms: 'company_id = :company_id', params: ['company_id' => $id])
             ->delete(table: 'companies', terms: 'id = :id', params: ['id' => (string) $id]);
 
-        if (false === $update_company->execute()) {
+        if (false === $delete_company->execute()) {
             return ['company does not exist.'];
         }
 

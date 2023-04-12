@@ -18,6 +18,7 @@ use App\DB\QueryBuilder;
 use App\Http\Request;
 use App\Http\RequestModelCompany;
 use App\Http\RequestModelUser;
+use App\Models\CompanyModel;
 use App\Models\UserModel;
 use App\Repositories\CompanyRepository;
 use App\Repositories\UserRepository;
@@ -56,10 +57,6 @@ $container->bind(UserRepository::class, function() use ($container) {
     return new UserRepository(queryBuilder: $container->make(key: QueryBuilder::class));
 });
 
-$container->bind(CompanyRepository::class, function() use ($container) {
-    return new CompanyRepository(queryBuilder: $container->make(key: QueryBuilder::class));
-});
-
 $container->bind(RequestModelUser::class, function() use ($container) {
     return new RequestModelUser(validator: $container->make(key: Http::class)->validator, model: UserModel::class);
 });
@@ -68,9 +65,14 @@ $container->bind(UsersController::class, function() use ($container) {
     return new UsersController($container->make(key: UserRepository::class), $container->make(key: RequestModelUser::class));
 });
 
+$container->bind(CompanyRepository::class, function() use ($container) {
+    return new CompanyRepository(queryBuilder: $container->make(key: QueryBuilder::class));
+});
+
 $container->bind(RequestModelCompany::class, function() use ($container) {
     return new RequestModelCompany(validator: $container->make(key: Http::class)->validator, model: CompanyModel::class);
 });
+
 
 $container->bind(CompaniesController::class, function() use ($container) {
     return new CompaniesController($container->make(key: CompanyRepository::class), $container->make(key: RequestModelCompany::class));

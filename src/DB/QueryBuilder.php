@@ -150,6 +150,10 @@ class QueryBuilder implements QueryBuilderInterface
             return false;
         }
 
+        if ($stmt->rowCount() == 1 && $lastInsertId == 0) {
+            return true;
+        }
+
         if (0 == $stmt->rowCount()) {
             return false;
         }

@@ -270,9 +270,9 @@ UserDelete
 ## Refatorar
 
 - Relacionamentos de associação (agregação) nas models
-- Request.php
+- Request.php v
 - Validator.php
-- QueryBuilder.php
+- QueryBuilder.php *********
 - Exceções
 - Segregar Contato de Pessoa
 - Segregar Endereço de Pessoa

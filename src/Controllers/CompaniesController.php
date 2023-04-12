@@ -82,7 +82,7 @@ class CompaniesController
     public function destroy(int $id, HttpInterface $http): \stdClass
     {
         if (true === $this->companyRepository->destroy(id: $id)) {
-            return $http->response->execute(data: [], status: 204);
+            return $http->response->execute(data: ['Success'], status: 204);
         }
 
         return $http->response->execute(data: [], status: 404);

@@ -106,11 +106,12 @@ class UserRepository implements UserRepositoryInterface
 
     public function destroy(int $id): array|bool
     {
-        $update_company = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
+        $delete_company = $this->queryBuilder->table(table: UserCompanyModelAbstract::TABLE)
             ->delete(table: '', terms: 'user_id = :user_id', params: ['user_id' => $id])
             ->delete(table: 'users', terms: 'id = :id', params: ['id' => (string) $id]);
 
-        if (false === $update_company->execute()) {
+
+        if (false === $delete_company->execute()) {
             return ['user does not exist.'];
         }
 
